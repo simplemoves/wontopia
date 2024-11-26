@@ -1,0 +1,92 @@
+.caption {
+  /* background-color: green; */
+  align-items: baseline;
+  width: 100%;
+}
+
+.main-title {
+  font-family: 'BebasNeue', Arial, serif;
+  color: rgb(230, 0, 0);
+  /* font-size: 5.8rem; */
+  font-size: 23vw;
+  font-weight: 700;
+  /* -webkit-text-stroke: 0.02em yellow; */
+}
+
+.version {
+  /* background-color: green; */
+  color: gray;
+  font-size: small;
+  font-weight: 300;
+}
+
+.disclaimer {
+  font-family: 'JosefinSans', Arial, serif;
+  flex-wrap: wrap;
+  font-size: 4vw;
+  /* background-color: red; */
+  /* width: 40%; */
+}
+
+.disclaimer-accent {
+  color: rgba(255, 255, 255);
+  font-family: 'BebasNeue', Arial, serif;
+  /* font-size: 5.8rem; */
+  font-size: 4vw;
+  font-weight: 900;
+}
+
+.disclaimer-accent-b {
+  color: rgb(60, 60, 60);
+  font-family: 'BebasNeue', Arial, serif;
+  /* font-size: 5.8rem; */
+  /* font-size: 4vw; */
+  font-weight: 900;
+}
+
+.disclaimer-accent-g {
+  color: rgb(4, 223, 0);
+  /* font-size: 5.8rem; */
+  font-weight: 900;
+}
+
+.ton {
+  color: #0098EA;
+  font-family: 'TonFont';
+  /* font-size: 4vw; */
+}
+
+.fees {
+  /* color: #a6a6a6; */
+  /* font-family: 'TonFont'; */
+  font-size: 3vw;
+  font-weight: 100;
+}
+
+.lore {
+  /* color: #a6a6a6; */
+  /* font-family: 'TonFont'; */
+  font-size: 3vw;
+  font-weight: 100;
+}
+
+.wontopia {
+  color: rgb(230, 0, 0);
+  font-weight: 600;
+}
+
+.letsdoit {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: rgb(230, 0, 0);
+  font-weight: 600;
+}
+
+.game {
+  /* align-items: baseline; */
+  /* background-color: magenta; */
+}
+
+.game-disclaimer {
+
+}
