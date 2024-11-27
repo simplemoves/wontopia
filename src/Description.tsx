@@ -4,8 +4,7 @@ import { TON } from './Ton';
 export const Description = ({isOpen, onClose}: {isOpen: boolean, onClose: () => void}) => {
   return (
     <Drawer
-      // title=<><span className='disclaimer-accent-b'>Wontopia</span> Description</>
-      title='Info'
+      title=<><span className='disclaimer-accent-b'>Wontopia</span> Description</>
       placement='bottom'
       size='large'
       // closable={false}

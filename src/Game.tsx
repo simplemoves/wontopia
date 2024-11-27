@@ -1,12 +1,15 @@
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, ReloadOutlined } from "@ant-design/icons";
 import { TonConnectButton } from "@tonconnect/ui-react";
-import { Dropdown, Flex, MenuProps, Space } from "antd";
+import { Button, Dropdown, Flex, MenuProps, Space, Spin } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
 import { PlayButton } from "./PlayButton";
 import { useWonTonContract } from "./hooks/useWonTonContract";
+import { useNftWatcher } from "./hooks/useNftWatcher";
+import { Address } from "@ton/core";
+import { NftCollections } from "./NftCollections";
 
-export const Game = () => {
+export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: Address }) => {
   const [ wontonPower, setWontonPower ] = useState(0);
   const [ universes, setUniverses ] = useState(globalUniversesHolder.universesHolder[0]);
 
@@ -21,14 +24,16 @@ export const Game = () => {
   
   const contract = useWonTonContract(universes.wonTon);
 
-const items: MenuProps["items"] = useMemo(() => {
-    return Object.values(globalUniversesHolder.universesHolder).map(universes => {
-        return {
-            key: universes.wonTonPower.toString(),
-            label: `Universe ${universes.wonTonPower}`,
-        }
-    });
-}, []);
+  const items: MenuProps["items"] = useMemo(() => {
+      return Object.values(globalUniversesHolder.universesHolder).map(universes => {
+          return {
+              key: universes.wonTonPower.toString(),
+              label: `Universe ${universes.wonTonPower}`,
+          }
+      });
+  }, []);
+
+  const { handleUpdate, running } = useNftWatcher(walletAddress);
 
   return (
     <Flex gap='small' align='start' vertical>
@@ -62,8 +67,12 @@ const items: MenuProps["items"] = useMemo(() => {
                       </Space>
                   </a>
               </Dropdown>
+              <Button onClick={handleUpdate} disabled={running}>{running ? <Spin/> : <ReloadOutlined/>}</Button>
           </Space>
       </Flex>
+      {ready && walletAddress ? (
+        <NftCollections walletAddress={walletAddress} wontonPower={wontonPower} />
+      ) : null }
     </Flex>
   );
 }

@@ -2,14 +2,12 @@ import './App.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useTonWallet } from '@tonconnect/ui-react';
 import { tonAddress } from './lib/TonUtils';
-import { useNftsStore } from './store/NftsStore';
+import { testOnly, useNftsStore } from './store/NftsStore';
 import { Disclaimer } from './Disclaimer';
 import { Game } from './Game';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 // window.Buffer = window.Buffer || require("buffer").Buffer;
-
-export const testOnly = import.meta.env.VITE_TEST_ONLY === 'true' || true;
 
 export const App = () => {
   const nftStore = useNftsStore();
@@ -26,5 +24,5 @@ export const App = () => {
     }
   }, [walletAddress]);
 
-  return !(ready && walletAddress) ? <Disclaimer/> : <Game/>
+  return !(ready && walletAddress) ? <Disclaimer/> : <Game ready={ready} walletAddress={walletAddress}/>
 }
