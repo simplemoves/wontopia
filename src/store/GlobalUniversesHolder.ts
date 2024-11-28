@@ -29,13 +29,12 @@ const initUniverses = () => {
                 },
                 prize: wontonPrizeFraction * BigInt(3 ** (wonTonPower + 1)),
             }
-            if (wonTonPower > 0) {
-                universesHolder.universesPrizes.push({
-                    key: wonTonPower.toString(),
-                    universe: wonTonPower,
-                    prize: +fromNano(wontonPrizeFraction) * (3 ** (wonTonPower + 1)),
-                });
-            }
+
+            universesHolder.universesPrizes.push({
+                key: wonTonPower.toString(),
+                universe: wonTonPower,
+                prize: +fromNano(wontonPrizeFraction) * (3 ** (wonTonPower + 1)),
+            });
         } else {
         }
     }
