@@ -1,4 +1,4 @@
-import { ApiOutlined, DownOutlined, QuestionCircleOutlined, ReloadOutlined } from "@ant-design/icons";
+import { ApiOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 // import { TonConnectButton } from "@tonconnect/ui-react";
 import { Button, Dropdown, Flex, MenuProps, Space } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
