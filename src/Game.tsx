@@ -74,7 +74,7 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
               loading={running}
               menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }}
               onClick={handleUpdate}>
-              <ReloadOutlined/> Refresh Universes
+              Refresh Universes
             </Dropdown.Button>
             <Button onClick={onOpen}><QuestionCircleOutlined /></Button>
           </Space>
