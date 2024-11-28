@@ -79,12 +79,20 @@ export const CollectionInfoSchema = z.object({
   cType: CollectionTypeSchema,
 });
 
+export const UniversesPrizesItemSchema = z.object({
+  key: z.string(),
+  universe: z.number().min(0),
+  prize: z.number().min(0),
+});
+
 export const BEUniversesHolderSchema = z.record(z.number(), BEUniversesSchema);
 export const ContractSetSchema = z.record(z.string(), CollectionInfoSchema);
+export const UniversesPrizesSchema = z.array(UniversesPrizesItemSchema);
 
 export const FEUniversesHolderSchema = z.object({
   universesHolder: BEUniversesHolderSchema,
   collections: ContractSetSchema,
+  universesPrizes: UniversesPrizesSchema,
 });
 
 export const SendDeployFunctionSchema =
@@ -177,6 +185,7 @@ export type NonNft = z.infer<typeof NonNftSchema>;
 export type NftMeta = z.infer<typeof NftMetaSchema>;
 export type TonClientParametersOpt = z.infer<typeof TonClientParametersOptSchema>;
 export type Deployable = z.infer<typeof DeployableSchema>;
+export type UniversesPrizesItem = z.infer<typeof UniversesPrizesItemSchema>;
 
 export const NOT_NFT: NonNft = { type: 'NON_NFT' };
 

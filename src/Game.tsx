@@ -1,6 +1,6 @@
-import { DownOutlined, ReloadOutlined } from "@ant-design/icons";
-import { TonConnectButton } from "@tonconnect/ui-react";
-import { Button, Dropdown, Flex, MenuProps, Space, Spin } from "antd";
+import { ApiOutlined, DownOutlined, QuestionCircleOutlined, ReloadOutlined } from "@ant-design/icons";
+// import { TonConnectButton } from "@tonconnect/ui-react";
+import { Button, Dropdown, Flex, MenuProps, Space } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
 import { PlayButton } from "./PlayButton";
@@ -8,6 +8,12 @@ import { useWonTonContract } from "./hooks/useWonTonContract";
 import { useNftWatcher } from "./hooks/useNftWatcher";
 import { Address } from "@ton/core";
 import { NftCollections } from "./NftCollections";
+import { Wontopia } from "./Wontopia";
+import { Typography } from 'antd';
+import { testOnly } from "./store/NftsStore";
+import { useTonConnectUI } from "@tonconnect/ui-react";
+import { UniversesDescription } from "./UniversesDescription";
+const { Paragraph } = Typography;
 
 export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: Address }) => {
   const [ wontonPower, setWontonPower ] = useState(0);
@@ -35,19 +41,47 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
 
   const { handleUpdate, running } = useNftWatcher(walletAddress);
 
+  const [ tonConnectUI ] = useTonConnectUI();
+  const disconnectWallet = useCallback(() => {
+    console.log("closing the ");
+    tonConnectUI.disconnect();
+  }, [close]);
+
+  const [open, setOpen] = useState(false);
+  const onClose = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
+  const onOpen = useCallback(() => {
+    setOpen(true);
+  }, [setOpen]);
+
   return (
     <Flex gap='small' align='start' vertical>
-            <Flex vertical={false} gap='middle' justify='space-between' className='caption'>
-        <div className='main-title'>WONTOPIA</div>
-        <div className='version'>v0.1.0</div>
-      </Flex>
+      <Wontopia />
 
-      <Flex vertical={false} gap='middle' justify='space-between' align='flex-end' className="game">
-          <div className='letsdoit'>Connected to the wallet</div>
-          <TonConnectButton/>
+      <Flex vertical={false} gap='small' justify='space-between' align='center' className="game">
+          <div className='connected'>Connected to the wallet</div>            
+          <Button color="default" variant="solid" onClick={disconnectWallet}>Disconect<ApiOutlined /></Button>
+          {/* <TonConnectButton/> */}
       </Flex>
+      <Paragraph copyable className="address">{walletAddress.toString({testOnly})}</Paragraph>
 
-      {wontonPower ===0 ? (
+      <Flex vertical={false} gap="middle" align='flex-start' className='zhopa2'>
+          <Space>
+            <Dropdown.Button
+              icon={<DownOutlined />}
+              loading={running}
+              menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }}
+              onClick={handleUpdate}>
+              <ReloadOutlined/> Refresh Universes
+            </Dropdown.Button>
+            <Button onClick={onOpen}><QuestionCircleOutlined /></Button>
+          </Space>
+      </Flex>
+      <UniversesDescription isOpen={open}  onClose={onClose}/>
+
+      { wontonPower === 0 ? (
         <>
           <p className="game-disclaimer">
             We are ready to play.
@@ -57,19 +91,6 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
         : null
       }
 
-      <Flex vertical={false} gap="middle" align='flex-start' className='zhopa2'>
-          <Space>
-              <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} trigger={[ 'click' ]}>
-                  <a onClick={(e) => e.preventDefault()}>
-                      <Space>
-                          Universes
-                          <DownOutlined/>
-                      </Space>
-                  </a>
-              </Dropdown>
-              <Button onClick={handleUpdate} disabled={running}>{running ? <Spin/> : <ReloadOutlined/>}</Button>
-          </Space>
-      </Flex>
       {ready && walletAddress ? (
         <NftCollections walletAddress={walletAddress} wontonPower={wontonPower} />
       ) : null }

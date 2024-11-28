@@ -1,11 +1,11 @@
-import { address } from "@ton/core";
+import { address, fromNano } from "@ton/core";
 import { log } from "console";
 import { FEUniversesHolder } from "../lib/Types";
 
 const wontonPrizeFraction = BigInt(import.meta.env.VITE_WONTON_PRIZE_FRACTION_TON!);
 
 const initUniverses = () => {
-    const universesHolder: FEUniversesHolder = {universesHolder: {}, collections: {}};
+    const universesHolder: FEUniversesHolder = {universesHolder: {}, collections: {}, universesPrizes: []};
     for (const wonTonPower of Array(2).keys()) {
         const wonTon = address(import.meta.env[`VITE_WONTON_CONTRACT_ADDRESS_${wonTonPower}`]);
         const wCollection = address(import.meta.env[`VITE_WIN_NFT_COLLECTION_ADDRESS_${wonTonPower}`]);
@@ -28,6 +28,13 @@ const initUniverses = () => {
                     collection: lCollection,
                 },
                 prize: wontonPrizeFraction * BigInt(3 ** (wonTonPower + 1)),
+            }
+            if (wonTonPower > 0) {
+                universesHolder.universesPrizes.push({
+                    key: wonTonPower.toString(),
+                    universe: wonTonPower,
+                    prize: +fromNano(wontonPrizeFraction) * (3 ** (wonTonPower + 1)),
+                });
             }
         } else {
         }
