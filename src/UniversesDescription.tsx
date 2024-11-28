@@ -1,6 +1,5 @@
 import { Drawer, Table, TableProps } from 'antd';
 import { AccentB, TON } from './Typography';
-import { Lore } from './Lore';
 import { globalUniversesHolder } from './store/GlobalUniversesHolder';
 import { UniversesPrizesItem } from './lib/Types';
 
@@ -14,7 +13,7 @@ const columns: TableProps<UniversesPrizesItem>['columns'] = [
     title: 'Prize',
     dataIndex: 'prize',
     key: 'prize',
-    render: (prize) => <>{prize} <TON /></>
+    render: (prize) => <>~ {prize} <TON /></>
   }
 ];
 
@@ -37,7 +36,10 @@ export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClos
         <p>
           Each Universe represent a game level. The higher the level, or Universe - the higher the price of the prize.
         </p>
-        <Table<UniversesPrizesItem> columns={columns} dataSource={data} />;
+        <Table<UniversesPrizesItem>
+          columns={columns}
+          dataSource={data}
+          pagination={false} />
       </div>
     </Drawer>
   );
