@@ -39,7 +39,7 @@ export const Description = ({isOpen, onClose, onClearCache}: {isOpen: boolean, o
       <p className='fees'><em>
           Approximately 0.6 <TON/> coins from each initial stake will remain in the game. Part of this amount will be spent on network fees to run the smart contracts, and the remainder will support development and infrastructure.
       </em></p>
-      <Lore />
+      {/* <Lore /> */}
       <p>
         <Button color="default" variant="solid" shape='round' onClick={() => onClearCache()}
               style={{ 
