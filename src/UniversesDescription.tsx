@@ -2,7 +2,7 @@ import { Divider, Drawer, Table, TableProps } from 'antd';
 import { AccentB, AccentC, AccentT, TON } from './Typography';
 import { globalUniversesHolder } from './store/GlobalUniversesHolder';
 import { UniversesPrizesItem } from './lib/Types';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, ReloadOutlined } from '@ant-design/icons';
 
 const columns: TableProps<UniversesPrizesItem>['columns'] = [
   {
@@ -34,7 +34,7 @@ export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClos
       <div className='disclaimer'>
         <Divider orientation="left" plain><b>Refresh Universe</b></Divider>
         <p>
-          Clicking the "<b>Refresh Universe</b>" button will initiate the process of finding all items related to <AccentB>Wontopia</AccentB>.
+          Clicking the "<ReloadOutlined />" button will initiate the process of finding all items related to <AccentB>Wontopia</AccentB>.
           Please note that this may take some time for the very first click, as it involves reading all the related transactions from the <TON /> Blockchain.
           Players must refresh the Universe after playing to view the results of the game.
         </p>

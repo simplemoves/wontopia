@@ -26,3 +26,8 @@ export const parsePossibleNftTransfer = (body: Cell): number => {
   const cs = body.beginParse();
   return cs.loadUint(32);
 }
+
+export const decodeCommonContentUrl = (commonContentUrl: Cell): string => {
+  const cs = commonContentUrl.beginParse();
+  return String(cs.loadBuffer(Math.ceil(cs.remainingBits/8)));
+}

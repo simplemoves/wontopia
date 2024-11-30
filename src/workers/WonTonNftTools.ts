@@ -2,7 +2,7 @@
 
 import { Transaction } from "@ton/ton";
 import { Address } from '@ton/core'
-import { CollectionInfo, FeGetNftData, FOUND, GetNftData, isNft, isNftData, NFT, Nft, NftMeta, NftStore, NonNft, NOT_NFT } from "../lib/Types";
+import { CollectionInfo, collectionTypeCaptions, FeGetNftData, FOUND, GetNftData, isNft, isNftData, NFT, Nft, NftMeta, NftMetaAttributes, NftStore, NonNft, NOT_NFT } from "../lib/Types";
 import { isTonAddress, possiblyNftTransfer } from "../lib/TonUtils";
 import axios from "axios";
 import { globalUniversesHolder } from "../store/GlobalUniversesHolder.ts";
@@ -10,6 +10,7 @@ import { testOnly } from "../store/NftsStore.ts";
 import { getErrorMessage } from "../lib/ErrorHandler.ts";
 import { wonTonClientProvider } from "../providers/WonTonClientProvider.ts";
 import { tryNTimes } from "../lib/PromisUtils.ts";
+import { DescriptionsProps } from "antd";
 
 export const digForNewNfts = async (walletAddress: Address,
     walletAddressStr: string,
@@ -208,3 +209,36 @@ const tryRequestTransactionList = async (walletAddress: Address, hash?: string, 
 const tryGetNftData = async (nftAddress: Address) =>
     tryNTimes(() => getNftData(nftAddress), 5, 500);
 
+export const mapNftToDescriptionProps = (nft: Nft): DescriptionsProps['items'] => {
+    return [
+        {
+            label: 'Nft Index',
+            children: nft.nft_index,
+        },
+        {
+            label: 'Collection Type',
+            children: collectionTypeCaptions[nft.collection_type],
+        },
+        {
+            label: 'Wonton Power',
+            children: nft.wonton_power,
+        },
+        {
+            label: 'Created At',
+            children: new Date(+nft.created_at).toISOString(),
+        },
+        {
+            label: 'Description',
+            children: nft.nft_meta?.description,
+        },
+    ];
+}
+
+export const mapAttrToDescriptionProps = (attributes: NftMetaAttributes[]): DescriptionsProps['items'] => {
+    return attributes.map((attribute) => {
+        return {
+            label: attribute.trait_type,
+            children: attribute.value,
+        }        
+    });
+}

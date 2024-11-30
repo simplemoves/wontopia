@@ -1,22 +1,34 @@
 import { Address } from "@ton/core";
-import { createNftIndexFrom, testOnly, useNftsStore } from "./store/NftsStore";
+import { testOnly, useNftsStore } from "./store/NftsStore";
 import { useMemo } from "react";
-import { NftItem } from "./NftItem";
+import { Col, Divider, Row, Spin } from "antd";
+import { NftCollection } from "./NftCollection";
+import { CCaption } from "./Typography";
+import { useNftWatcher } from "./hooks/useNftWatcher";
+import { ReloadOutlined } from "@ant-design/icons";
 
 export function NftCollections({ walletAddress, wontonPower }: { walletAddress: Address, wontonPower: number }) {
-  const nftStore = useNftsStore();
-  const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
-  const filteredNfts = useMemo(() => {
-      const filtered = nftStore.filteredNfts(walletAddressStr, 'WIN', wontonPower + 1);
-      // console.log(`Filtered size for ${collection_type}: ${Object.keys(filtered).length}`);
-      return filtered;
-  }, [ nftStore.store(walletAddressStr).nfts, wontonPower ]);
+    const nftStore = useNftsStore();
+    const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
+    const filteredWinNfts = useMemo(() => {
+        return Object.values(nftStore.filteredNfts(walletAddressStr, 'WIN', wontonPower + 1));
+    }, [ nftStore.store(walletAddressStr).nfts, wontonPower ]);
 
-  const newNft = useMemo(() => {
-      return nftStore.newNft(walletAddressStr);
-  }, [walletAddressStr])
+    const filteredLooseNfts = useMemo(() => {
+        return Object.values(nftStore.filteredNfts(walletAddressStr, 'LOOSE', wontonPower + 1));
+    }, [ nftStore.store(walletAddressStr).nfts, wontonPower ]);
 
-  return Object.keys(filteredNfts).map((nftId) =>
-      <NftItem nft={filteredNfts[nftId]} key={nftId} isNew={nftId === createNftIndexFrom(newNft)}/>,
-  );
+    const { handleUpdate, running } = useNftWatcher(walletAddress);
+
+    return (
+        <>
+            <Divider variant="dotted" style={{ borderColor: 'silver' }}>
+                <CCaption>Received NFTs {running ? <Spin indicator={<ReloadOutlined spin />} style={{ color: 'silver' }} size="large" /> : <ReloadOutlined style={{ color: 'silver' }} onClick={handleUpdate} />}</CCaption>
+            </Divider>
+            <Row style={{ width: '100%' }} wrap={false} justify="center">
+                <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts}/></Col>
+                <Col span={12}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts}/></Col>
+            </Row>
+        </>
+    );
 }

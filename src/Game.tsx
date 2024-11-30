@@ -1,6 +1,6 @@
 import { ApiOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 // import { TonConnectButton } from "@tonconnect/ui-react";
-import { Button, Dropdown, Flex, MenuProps, Space } from "antd";
+import { Button, Divider, Dropdown, Flex, MenuProps, Space } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
 import { PlayButton } from "./PlayButton";
@@ -13,6 +13,7 @@ import { Typography } from 'antd';
 import { testOnly } from "./store/NftsStore";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { UniversesDescription } from "./UniversesDescription";
+import { Accent, CCaption } from "./Typography";
 const { Paragraph } = Typography;
 
 export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: Address }) => {
@@ -39,8 +40,6 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
       });
   }, []);
 
-  const { handleUpdate, running } = useNftWatcher(walletAddress);
-
   const [ tonConnectUI ] = useTonConnectUI();
   const disconnectWallet = useCallback(() => {
     console.log("closing the ");
@@ -60,36 +59,31 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
     <Flex gap='small' align='start' vertical>
       <Wontopia />
 
-      <Flex vertical={false} gap='small' justify='space-between' align='center' className="game">
-          <div className='connected'>Connected to the wallet</div>            
-          <Button color="default" variant="solid" onClick={disconnectWallet}>Disconect<ApiOutlined /></Button>
-          {/* <TonConnectButton/> */}
+      <Flex vertical={false} gap='large' align='center' className="game">
+          <div className='connected'>Connected to the wallet</div>   
+          <Button color="default" variant="solid" shape='round' icon={<ApiOutlined />} onClick={disconnectWallet} style={{ color: 'gray'}}>
+            Disconnect
+          </Button>         
       </Flex>
       <Paragraph copyable className="address">{walletAddress.toString({testOnly})}</Paragraph>
+      <Divider variant="dotted" style={{ borderColor: 'silver' }}>
+        <CCaption>Chose universe</CCaption>
+      </Divider>
 
-      <Flex vertical={false} gap="middle" align='flex-start' className='zhopa2'>
-          <Space>
-            <Dropdown.Button
-              icon={<DownOutlined />}
-              loading={running}
-              menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }}
-              onClick={handleUpdate}>
-              Refresh Universes
-            </Dropdown.Button>
-            <Button onClick={onOpen}><QuestionCircleOutlined /></Button>
-          </Space>
+      <Flex vertical={false} gap="small" align='flex-start'>
+        <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} overlayClassName="custom-dropdown">
+          <Button color="default" variant="solid" >
+            <Space>
+              <div className="connected" style={{paddingTop: '3px'}}>Universe {universes.wonTonPower}</div>
+              <DownOutlined style={{ color: '#E60000' }}/>
+            </Space>
+          </Button>
+        </Dropdown>          
+        <Button color="default" variant="solid" shape='circle' onClick={onOpen} icon={<QuestionCircleOutlined />}  style={{ color: '#E60000' }}/>
+        { wontonPower === 0 ? (<PlayButton sendBet={contract.sendBet} />) : null }
+
       </Flex>
-      <UniversesDescription isOpen={open}  onClose={onClose}/>
-
-      { wontonPower === 0 ? (
-        <>
-          <p className="game-disclaimer">
-            We are ready to play.
-          </p>
-          <PlayButton sendBet={contract.sendBet} />
-        </> )
-        : null
-      }
+      <UniversesDescription isOpen={open}  onClose={onClose}/>      
 
       {ready && walletAddress ? (
         <NftCollections walletAddress={walletAddress} wontonPower={wontonPower} />

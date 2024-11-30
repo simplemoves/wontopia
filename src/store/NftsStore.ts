@@ -29,8 +29,9 @@ export const useNftsStore = create<NftStore>()(
                 transactions: (walletAddressStr: string): SimpleTransactionHistory => {
                     return get().store(walletAddressStr).transactions;
                 },
-                newNft: (walletAddress: string): Nft | undefined => {
-                    return get().store(walletAddress).newNft;
+                newNft: (walletAddress, cType): Nft | undefined => {
+                    const newNftMaybe =  get().store(walletAddress).newNft;
+                    return newNftMaybe?.collection_type === cType ? newNftMaybe : undefined;
                 },
                 isTransactionProcessed: (walletAddressStr, txHash): boolean => {
                     return get().store(walletAddressStr).transactions[txHash]?.state === PROCESSED;
@@ -156,6 +157,7 @@ export const useNftsStore = create<NftStore>()(
 export const createNftIndex = (cType: CollectionType, wontonPower: number, nftIndex: number) => `${cType}:${wontonPower}:${nftIndex}`;
 
 export const createNftIndexFrom = (nft?: Nft) => `${nft?.collection_type}:${nft?.wonton_power}:${nft?.nft_index}`;
+export const equalNfts = (nft1?: Nft, nft2?: Nft) => createNftIndexFrom(nft1) === createNftIndexFrom(nft2);
 
 export const checkNewNft = (newNft: Nft): Nft | undefined => {
     const nftDate = +newNft.created_at;

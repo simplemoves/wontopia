@@ -85,6 +85,29 @@ export const UniversesPrizesItemSchema = z.object({
   prize: z.number().min(0),
 });
 
+export const NftItemDescriptionSchema = z.object({
+  index: z.number(),
+  cType: CollectionTypeSchema,
+  wontonPower: z.number(),
+  createdAt: z.string(),
+  name: z.string(),
+  description: z.string(),
+});
+
+export const NftItemDataSchema = z.object({
+  is_active: z.boolean(),
+  index: z.number().min(1),
+  collection_address: z.custom<Address>().nullable(),
+  owner_address: z.custom<Address>().nullable(),
+  content: z.string().min(1),
+});
+
+export const NftItemWontonDataSchema = z.object({
+  is_active: z.boolean(),
+  balance: z.bigint(),
+  wonton_power: z.number().min(1),
+});
+
 export const BEUniversesHolderSchema = z.record(z.number(), BEUniversesSchema);
 export const ContractSetSchema = z.record(z.string(), CollectionInfoSchema);
 export const UniversesPrizesSchema = z.array(UniversesPrizesItemSchema);
@@ -149,7 +172,7 @@ export const AnyNotProcessesTransactionsSchema = z.function().args(z.string()).r
 export const PollFunctionSchema = z.function().args(z.custom<Address>()).returns(z.promise(z.void()));
 export const UpdateNftOwnerFunctionSchema = z.function().args(z.custom<Address>()).returns(z.promise(z.void()));
 export const FilteredNftsFunctionSchema = z.function().args(z.string(), CollectionTypeSchema, z.number()).returns(NftsHistorySchema);
-export const NewNftFunctionSchema = z.function().args(z.string()).returns(NftSchema.optional());
+export const NewNftFunctionSchema = z.function().args(z.string(), CollectionTypeSchema).returns(NftSchema.optional());
 
 export const NftStoreSchema = z.object({
   storesRegistry: StoreRegistrySchema,
@@ -186,6 +209,10 @@ export type NftMeta = z.infer<typeof NftMetaSchema>;
 export type TonClientParametersOpt = z.infer<typeof TonClientParametersOptSchema>;
 export type Deployable = z.infer<typeof DeployableSchema>;
 export type UniversesPrizesItem = z.infer<typeof UniversesPrizesItemSchema>;
+export type NftItemDescription = z.infer<typeof NftItemDescriptionSchema>;
+export type NftItemData = z.infer<typeof NftItemDataSchema>;
+export type NftItemWontonData = z.infer<typeof NftItemWontonDataSchema>;
+export type NftMetaAttributes = z.infer<typeof NftMetaAttributesSchama>;
 
 export const NOT_NFT: NonNft = { type: 'NON_NFT' };
 
@@ -198,4 +225,9 @@ export const isNft = (nft: Nft | NonNft): nft is Nft => {
 
 export const isNftData = (nftData: GetNftData|undefined): nftData is GetNftData => {
   return nftData != undefined;
+}
+
+export const collectionTypeCaptions = {
+  [WIN]: "Winning Collection", 
+  [LOOSE]: "Loosing Collection", 
 }
