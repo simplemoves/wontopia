@@ -1,8 +1,9 @@
-import { Drawer } from 'antd';
+import { Button, Drawer } from 'antd';
 import { AccentB, TON } from './Typography';
+import { Lore } from './Lore';
 // import { Lore } from './Lore';
 
-export const Description = ({isOpen, onClose}: {isOpen: boolean, onClose: () => void}) => {
+export const Description = ({isOpen, onClose, onClearCache}: {isOpen: boolean, onClose: () => void, onClearCache: () => void}) => {
   return (
     <Drawer
       title=<><AccentB>Wontopia</AccentB> Description</>
@@ -38,8 +39,16 @@ export const Description = ({isOpen, onClose}: {isOpen: boolean, onClose: () => 
       <p className='fees'><em>
           Approximately 0.6 <TON/> coins from each initial stake will remain in the game. Part of this amount will be spent on network fees to run the smart contracts, and the remainder will support development and infrastructure.
       </em></p>
-
-      {/* <Lore /> */}
+      <Lore />
+      <p>
+        <Button color="default" variant="solid" shape='round' onClick={() => onClearCache()}
+              style={{ 
+                  backgroundColor: '#1C1C1C',
+                  borderColor: '#1C1C1C',
+                  color: 'silver' }}>
+          Clear Cache 
+        </Button>
+      </p>
     </Drawer>
   );
 }
