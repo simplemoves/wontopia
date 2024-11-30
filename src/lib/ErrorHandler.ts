@@ -35,13 +35,12 @@ export function printJson<T>(obj: T) {
     );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export interface BigInt {
     /** Convert to BigInt to string form in JSON.stringify */
     toJSON: () => string;
 }
 
-// @ts-ignore
+// @ts-expect-error: Redefining in TS for the object
 BigInt.prototype.toJSON = function () {
     return this.toString();
 };

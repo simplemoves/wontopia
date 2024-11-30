@@ -220,7 +220,7 @@ export const NOT_NFT: NonNft = { type: 'NON_NFT' };
 // Function helpers
 ////////////////////////////////
 export const isNft = (nft: Nft | NonNft): nft is Nft => {
-  return nft!! && nft.type == NFT;
+  return !!nft && nft.type == NFT;
 }
 
 export const isNftData = (nftData: GetNftData|undefined): nftData is GetNftData => {

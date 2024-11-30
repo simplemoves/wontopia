@@ -7,11 +7,11 @@ export const trim = (str: string) => str.replace(/\r?\n|\r/, "");
 export const spawn = (command: string, args: string[]) => new Promise<boolean>((resolve, reject) => {
     const spawn = child_process.spawn(command, args);
 
-    spawn.stdout.on('data', (data: any) => {
+    spawn.stdout.on('data', (data) => {
         console.log(trim(data.toString()));
     })
 
-    spawn.stderr.on('data', (error: any) => {
+    spawn.stderr.on('data', (error) => {
         const error_str = trim(error.toString());
         console.error(error_str);
         reject(Error(error_str));

@@ -6,9 +6,6 @@ import { testOnly, useNftsStore } from './store/NftsStore';
 import { Disclaimer } from './Disclaimer';
 import { Game } from './Game';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-// window.Buffer = window.Buffer || require("buffer").Buffer;
-
 export const App = () => {
   const nftStore = useNftsStore();
   const wallet = useTonWallet();
@@ -22,7 +19,7 @@ export const App = () => {
     } else {
         setReady(false);
     }
-  }, [walletAddress]);
+  }, [walletAddress, nftStore]);
 
   return !(ready && walletAddress) ? <Disclaimer/> : <Game ready={ready} walletAddress={walletAddress}/>
 }

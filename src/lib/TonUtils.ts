@@ -3,7 +3,7 @@ import { Maybe } from "@ton/core/dist/utils/maybe";
 import { Opcodes } from "./Opcodes";
 
 export const isTonAddress = (address: Address | Maybe<ExternalAddress> | undefined): address is Address => {
-  return address!! && ((address as Address).workChain !== undefined);
+  return !!address && ((address as Address).workChain !== undefined);
 }
 
 export const tonAddress = (src: string | undefined | null): Address | undefined => src ? Address.parse(src) : undefined;

@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-globals */
-
 import { Transaction } from "@ton/ton";
 import { Address } from '@ton/core'
 import { CollectionInfo, collectionTypeCaptions, FeGetNftData, FOUND, GetNftData, isNft, isNftData, NFT, Nft, NftMeta, NftMetaAttributes, NftStore, NonNft, NOT_NFT } from "../lib/Types";
@@ -18,10 +16,8 @@ export const digForNewNfts = async (walletAddress: Address,
     try {
         await readTransactions(walletAddress, walletAddressStr, get);
     } catch (ex) {
-        // @ts-ignore
-        console.error(ex.message)
-        // @ts-ignore
-        console.error(ex.stackTrace)
+        const error = getErrorMessage(ex)
+        console.error(error)
     }
 }
 
@@ -151,7 +147,8 @@ const fetchMeta = async (cInfo: CollectionInfo, nftIndex: number): Promise<NftMe
         const response = await axios.get(`https://simplemoves.github.io/wonton-nft/${cInfo.cType}/${cInfo.wonTonPower}/meta-${nftIndex}.json`);
         return response.data;
     } catch (error) {
-        console.error(`Error fetching meta. cType: ${cInfo.cType}, wonTonPower: ${cInfo.wonTonPower}, index: ${nftIndex}`);
+        const msg = getErrorMessage(error);
+        console.error(`Error fetching meta. cType: ${cInfo.cType}, wonTonPower: ${cInfo.wonTonPower}, index: ${nftIndex}, error: ${msg}`);
         return undefined;
     }
 }
@@ -162,11 +159,11 @@ export const checkNftOwner = async (nftAddress: Address, walletAddress: Address)
     // console.log(`Nft address is address: ${Address.isAddress(nftAddress)}`);
     // console.log(printJson(nftAddress));
     const nft = await getNftData(nftAddress);
+    const nftDefined: boolean = !!nft;
     // console.log(`Nft's owner address: ${nftAddress?.toString({ testOnly })}`);
     // console.log(`Wallet address: ${this.walletAddress?.toString({ testOnly })}`);
     // console.log(`this.walletAddress.equals(nft.owner): ${this.walletAddress.equals(nft.owner)}`);
-    const ownershipApproved = !nft!! ||
-                              (isNftData(nft?.getNftData) && walletAddress.equals(nft?.getNftData.owner));
+    const ownershipApproved = !nftDefined || (isNftData(nft?.getNftData) && walletAddress.equals(nft?.getNftData.owner));
     return {
         ownershipApproved,
         owner: ownershipApproved ? walletAddress : nft?.getNftData?.owner,

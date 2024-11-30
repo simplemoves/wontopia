@@ -10,16 +10,16 @@ export function useNftWatcher(walletAddress: Address | undefined) {
     const handleUpdate = useCallback(() => {
         const poll = async () => {
             if (walletAddress) {
-                setRunning(_ => true);
+                setRunning(() => true);
                 try {
                     console.log(`${new Date().getTime()} | Polling nfts... ${running}`);
                     await nftStore.poll(walletAddress);
                     await nftStore.updateNftOwner(walletAddress);
                     console.log(`${new Date().getTime()} | Finished polling nfts, and updating owners...`);
-                    setRunning(_ => false);
+                    setRunning(() => false);
                 } catch (error) {
                     console.error(`${new Date().getTime()} | Polling nfts failed with error: ${getErrorMessage(error)}`);
-                    setRunning(_ => false);
+                    setRunning(() => false);
                 }
             } else {
                 console.log("No wallet address provided yet");

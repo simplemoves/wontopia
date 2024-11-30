@@ -21,7 +21,7 @@ export function useWonTonContract(wontonAddress: Address) {
             const queryId = new Date().getTime();
             return await openedContract.sendBet(sender, { queryId, value: toNano("1.0"), provided_wonton_power: 0 });
         }, 3, 100);
-    }, [ contract, sender ]);
+    }, [ contract, sender, openContract ]);
 
     return {
         contract,

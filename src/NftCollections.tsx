@@ -12,11 +12,11 @@ export function NftCollections({ walletAddress, wontonPower }: { walletAddress: 
     const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
     const filteredWinNfts = useMemo(() => {
         return Object.values(nftStore.filteredNfts(walletAddressStr, 'WIN', wontonPower + 1));
-    }, [ nftStore.store(walletAddressStr).nfts, wontonPower ]);
+    }, [ nftStore, walletAddressStr, wontonPower ]);
 
     const filteredLooseNfts = useMemo(() => {
         return Object.values(nftStore.filteredNfts(walletAddressStr, 'LOOSE', wontonPower + 1));
-    }, [ nftStore.store(walletAddressStr).nfts, wontonPower ]);
+    }, [ nftStore, walletAddressStr, wontonPower ]);
 
     const { handleUpdate, running } = useNftWatcher(walletAddress);
 

@@ -35,7 +35,6 @@ const initUniverses = () => {
                 universe: wonTonPower,
                 prize: +fromNano(wontonPrizeFraction) * (3 ** (wonTonPower + 1)),
             });
-        } else {
         }
     }
 

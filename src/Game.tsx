@@ -1,11 +1,9 @@
 import { ApiOutlined, DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-// import { TonConnectButton } from "@tonconnect/ui-react";
 import { Button, Divider, Dropdown, Flex, MenuProps, Space } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
 import { PlayButton } from "./PlayButton";
 import { useWonTonContract } from "./hooks/useWonTonContract";
-import { useNftWatcher } from "./hooks/useNftWatcher";
 import { Address } from "@ton/core";
 import { NftCollections } from "./NftCollections";
 import { Wontopia } from "./Wontopia";
@@ -13,7 +11,7 @@ import { Typography } from 'antd';
 import { testOnly } from "./store/NftsStore";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { UniversesDescription } from "./UniversesDescription";
-import { Accent, CCaption } from "./Typography";
+import { CCaption } from "./Typography";
 const { Paragraph } = Typography;
 
 export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: Address }) => {
@@ -44,7 +42,7 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
   const disconnectWallet = useCallback(() => {
     console.log("closing the ");
     tonConnectUI.disconnect();
-  }, [close]);
+  }, [tonConnectUI]);
 
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => {
