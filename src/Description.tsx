@@ -1,6 +1,5 @@
 import { Button, Drawer } from 'antd';
 import { AccentB, TON } from './Typography';
-import { Lore } from './Lore';
 // import { Lore } from './Lore';
 
 export const Description = ({isOpen, onClose, onClearCache}: {isOpen: boolean, onClose: () => void, onClearCache: () => void}) => {
