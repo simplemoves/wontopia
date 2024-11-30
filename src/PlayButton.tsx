@@ -7,8 +7,8 @@ export function PlayButton({ sendBet }: { sendBet: () => Promise<void> }) {
     return connected && (
         <Button color="default" variant="solid" shape='round' onClick={() => sendBet()}
             style={{ 
-                backgroundColor: '#E60000',
-                borderColor: '#E60000',
+                backgroundColor: '#B40000',
+                borderColor: '#B40000',
                 color: 'black' }}>
             Let's Play!
         </Button>

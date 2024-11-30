@@ -6,7 +6,7 @@
 
 .main-title {
   font-family: 'BebasNeue', Arial, serif;
-  color: rgb(199, 14, 14);
+  color: #B40000;
   /* font-size: 5.8rem; */
   font-size: 22vw;
   line-height: 1.0;
@@ -87,7 +87,7 @@
 }
 
 .wontopia {
-  color: rgb(199, 14, 14);
+  color: #B40000;
   font-weight: 600;
 }
 
@@ -100,14 +100,14 @@
 .letsdoit {
   font-family: 'BebasNeue', Arial, serif;
   font-size: 7vw;
-  color: rgb(199, 14, 14);
+  color: #B40000;
   font-weight: 600;
 }
 
 .connected {
   font-family: 'BebasNeue', Arial, serif;
   font-size: 5vw;
-  color: rgb(199, 14, 14);
+  color: #B40000;
   font-weight: 600;
 }
 
@@ -145,12 +145,12 @@
 
 /* In your CSS file or styled-components */
 .custom-dropdown .ant-dropdown-menu {
-  background-color: rgb(199, 14, 14);
+  background-color: #B40000;
   color: black;
 }
 
 .custom-dropdown .ant-dropdown-menu:hover {
-  background-color: rgb(199, 14, 14);
+  background-color: #B40000;
   color: black;
 }
 
@@ -181,8 +181,8 @@
 
 .nft-description-title {
   font-family: 'BebasNeue', Arial, serif;
-  text-decoration: underline;
   font-size: 5vw;
-  color: rgb(199, 14, 14);
+  color: #B40000;
   font-weight: 600;
+  letter-spacing: 1px;
 }

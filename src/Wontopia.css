@@ -35,5 +35,5 @@ div.fg{
   background-image: repeating-linear-gradient( 180deg,  
     var(--light-shadow) 0%, 
     var(--dark) 100%);
-  color: rgb(199, 14, 14);
+  color: #B40000;
 }
