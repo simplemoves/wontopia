@@ -209,16 +209,8 @@ const tryGetNftData = async (nftAddress: Address) =>
 export const mapNftToDescriptionProps = (nft: Nft): DescriptionsProps['items'] => {
     return [
         {
-            label: 'Nft Index',
-            children: nft.nft_index,
-        },
-        {
             label: 'Collection Type',
             children: collectionTypeCaptions[nft.collection_type],
-        },
-        {
-            label: 'Wonton Power',
-            children: nft.wonton_power,
         },
         {
             label: 'Created At',

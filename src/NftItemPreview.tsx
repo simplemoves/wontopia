@@ -23,7 +23,7 @@ export function NftItemPreview({ nft, sendBetNft, sendBurnNft, closePreview }: {
                 <center>
                     <Image
                         src={nft.nft_meta?.image}
-                        width={"20rem"}
+                        width={"15rem"}
                         preview={false}/>
                 </center>
                 <Descriptions
