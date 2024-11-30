@@ -1,0 +1,39 @@
+/* :root {
+  --gold: #ffb338;
+  --light-shadow: #8a6217;
+} */
+
+:root {
+  --dark: #000000;
+  --light-shadow: #202020;
+}
+
+.main-caption {
+  align-items: baseline;
+  min-width: 100%;
+}
+
+.main-title1 {
+  display: grid;
+  grid-template-areas: 'overlap';
+  text-transform: uppercase;
+}
+.main-title1 > div {
+  padding-left: 3px;
+  padding-right: 3px;
+  background-clip: text;  
+  -webkit-background-clip: text;
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 20vw;
+  font-weight: 700;
+  grid-area: overlap;
+  letter-spacing: 3px;
+  -webkit-text-stroke: 4px transparent;
+}
+
+div.fg{
+  background-image: repeating-linear-gradient( 315deg,  
+    var(--light-shadow) 0%, 
+    var(--dark) 100%);
+  color: rgb(199, 14, 14);
+}
