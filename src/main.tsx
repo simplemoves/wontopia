@@ -7,7 +7,7 @@ import WebApp from '@twa-dev/sdk'
 
 WebApp.ready();
 
-const manifestUrl = "https://simplemoves.github.io/wonton-nft/tonconnect-manifest.json";
+const manifestUrl = "https://simplemoves.github.io/wontopia-nft/tonconnect-manifest.json";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <TonConnectUIProvider manifestUrl={manifestUrl}>

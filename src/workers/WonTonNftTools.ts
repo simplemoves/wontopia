@@ -144,7 +144,7 @@ const handleTx = async (
 
 const fetchMeta = async (cInfo: CollectionInfo, nftIndex: number): Promise<NftMeta | undefined> => {
     try {
-        const response = await axios.get(`https://simplemoves.github.io/wonton-nft/${cInfo.cType}/${cInfo.wonTonPower}/meta-${nftIndex}.json`);
+        const response = await axios.get(`https://simplemoves.github.io/wontopia-nft/${cInfo.cType}/${cInfo.wonTonPower}/meta-${nftIndex}.json`);
         return response.data;
     } catch (error) {
         const msg = getErrorMessage(error);
