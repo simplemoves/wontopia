@@ -4,18 +4,8 @@
 }
 
 @font-face {
-  font-family: 'JosefinSans';
-  src: url('assets/fonts/JosefinSans-Regular.ttf') format('truetype');
-}
-
-@font-face {
   font-family: 'TonFont';
   src: url('assets/fonts/Inter-500.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'PlusJakartaSans';
-  src: url('assets/fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
 }
 
 @font-face {
