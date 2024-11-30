@@ -2,6 +2,7 @@ import { Config, getHttpEndpoint } from "@orbs-network/ton-access";
 import { TonClient, TonClientParameters } from "@ton/ton";
 import { RateLimiter } from "../lib/PromisUtils";
 import { TonClientParametersOpt } from "../lib/Types";
+import { testOnly } from "../lib/Constants";
 
 export const rateLimiterObj = new RateLimiter(1200);
 
@@ -19,7 +20,7 @@ export class WonTonClientProvider {
 
     wonTonClient = async (): Promise<TonClient> => {
         await this.rateLimiter.limit();
-        const endpointConfig: Config = this.config ? this.config : { network: "testnet" };
+        const endpointConfig: Config = this.config ? this.config : { network: testOnly ? "testnet" : "mainnet"  };
         return await getHttpEndpoint(endpointConfig)
             .then(endpoint => {
                 const tonClientParams: TonClientParameters = this.params ? { ... this.params, endpoint } : { endpoint };
