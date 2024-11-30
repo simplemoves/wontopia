@@ -4,7 +4,7 @@
 } */
 
 :root {
-  --dark: #000000;
+  --dark: #1C1C1C;
   --light-shadow: #202020;
 }
 
@@ -32,7 +32,7 @@
 }
 
 div.fg{
-  background-image: repeating-linear-gradient( 315deg,  
+  background-image: repeating-linear-gradient( 180deg,  
     var(--light-shadow) 0%, 
     var(--dark) 100%);
   color: rgb(199, 14, 14);
