@@ -14,7 +14,7 @@ export function NftItems({ walletAddressStr, cType, nfts }: { walletAddressStr: 
         const nftl = chunk[0];
         const nftr = chunk[1];
         result.push(
-            <Row justify="center" wrap={true}>
+            <Row justify="center" wrap={true} key={i}>
                 <Col>
                     <NftItem nft={nftl} key={nftl.nft_index} isNew={equalNfts(nftl, newNft)}/>
                     {nftr ? <NftItem nft={nftr} key={nftr.nft_index} isNew={equalNfts(nftr, newNft)}/> : null }

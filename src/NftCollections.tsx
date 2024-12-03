@@ -4,26 +4,31 @@ import { useMemo } from "react";
 import { Col, Divider, Row, Spin } from "antd";
 import { NftCollection } from "./NftCollection";
 import { CCaption } from "./Typography";
-import { useNftWatcher } from "./hooks/useNftWatcher";
 import { ReloadOutlined } from "@ant-design/icons";
+import { useNftWatcher2 } from "./hooks/useNftWatcher2";
+import { BEUniverses } from "./lib/Types";
 
-export function NftCollections({ walletAddress, wontonPower }: { walletAddress: Address, wontonPower: number }) {
+export function NftCollections({ walletAddress, universes }: { walletAddress: Address, universes: BEUniverses }) {
     const nftStore = useNftsStore();
     const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
     const filteredWinNfts = useMemo(() => {
-        return Object.values(nftStore.filteredNfts(walletAddressStr, 'WIN', wontonPower + 1));
-    }, [ nftStore, walletAddressStr, wontonPower ]);
+        return Object.values(nftStore.filteredNfts(walletAddressStr, 'WIN', universes.wonTonPower + 1));
+    }, [ nftStore, walletAddressStr, universes.wonTonPower ]);
 
     const filteredLooseNfts = useMemo(() => {
-        return Object.values(nftStore.filteredNfts(walletAddressStr, 'LOOSE', wontonPower + 1));
-    }, [ nftStore, walletAddressStr, wontonPower ]);
+        return Object.values(nftStore.filteredNfts(walletAddressStr, 'LOOSE', universes.wonTonPower + 1));
+    }, [ nftStore, walletAddressStr, universes.wonTonPower ]);
 
-    const { handleUpdate, running } = useNftWatcher(walletAddress);
+    // const { handleUpdate, running } = useNftWatcher(walletAddress);
+    const { handleUpdate, running } = useNftWatcher2(walletAddress, universes);
 
     return (
         <>
             <Divider variant="dotted" style={{ borderColor: 'silver' }}>
-                <CCaption>Received NFTs {running ? <Spin indicator={<ReloadOutlined spin />} style={{ color: 'silver' }} size="large" /> : <ReloadOutlined style={{ color: 'silver' }} onClick={handleUpdate} />}</CCaption>
+                <CCaption>Received NFTs {running ?
+                    <Spin indicator={<ReloadOutlined spin />} style={{ color: 'silver' }} size="large" /> :
+                    <ReloadOutlined style={{ color: 'silver' }} onClick={handleUpdate} />}
+                </CCaption>
             </Divider>
             <Row style={{ width: '100%' }} wrap={false} justify="center">
                 <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts}/></Col>

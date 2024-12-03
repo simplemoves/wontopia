@@ -84,7 +84,7 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
       <UniversesDescription isOpen={open}  onClose={onClose}/>      
 
       {ready && walletAddress ? (
-        <NftCollections walletAddress={walletAddress} wontonPower={wontonPower} />
+        <NftCollections walletAddress={walletAddress} universes={universes} />
       ) : null }
     </Flex>
   );

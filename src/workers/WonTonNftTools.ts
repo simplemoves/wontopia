@@ -1,6 +1,6 @@
 import { Transaction } from "@ton/ton";
 import { Address } from '@ton/core'
-import { CollectionInfo, collectionTypeCaptions, FeGetNftData, FOUND, GetNftData, isNft, isNftData, NFT, Nft, NftMeta, NftMetaAttributes, NftStore, NonNft, NOT_NFT } from "../lib/Types";
+import { BEUniverses, CollectionInfo, collectionTypeCaptions, FeGetNftData, FOUND, GetNftData, isNft, isNftData, NFT, Nft, NftMeta, NftMetaAttributes, NftStore, NonNft, NOT_NFT } from "../lib/Types";
 import { isTonAddress, possiblyNftTransfer } from "../lib/TonUtils";
 import axios from "axios";
 import { globalUniversesHolder } from "../store/GlobalUniversesHolder.ts";
@@ -9,6 +9,7 @@ import { getErrorMessage } from "../lib/ErrorHandler.ts";
 import { wonTonClientProvider } from "../providers/WonTonClientProvider.ts";
 import { tryNTimes } from "../lib/PromisUtils.ts";
 import { DescriptionsProps } from "antd";
+import { wonTonHttpClient } from "../providers/WontopiaTonClientProvider.ts";
 
 export const digForNewNfts = async (walletAddress: Address,
     walletAddressStr: string,
@@ -19,6 +20,32 @@ export const digForNewNfts = async (walletAddress: Address,
         const error = getErrorMessage(ex)
         console.error(error)
     }
+}
+
+export const requestNfts = async (walletAddress: Address,
+    universes: BEUniverses,
+    get: () => NftStore) => {
+    try {
+        await readNfts(walletAddress, universes, get);
+    } catch (ex) {
+        const error = getErrorMessage(ex)
+        console.error(error)
+    }
+}
+
+const readNfts = async (walletAddress: Address,
+    universes: BEUniverses,
+    get: () => NftStore) => {
+
+    const ownerStr = walletAddress.toString({testOnly});
+    const wontonPower = universes.wonTonPower + 1;
+    
+    const client =  await wonTonHttpClient();
+    
+    const winNfts = await client.getNftItems('WIN', ownerStr, universes.winUniverse.collection.toRawString(), wontonPower);
+    get().addNfts(ownerStr, winNfts);
+    const looseNfts = await client.getNftItems('LOOSE', ownerStr, universes.looseUniverse.collection.toRawString(), wontonPower);
+    get().addNfts(ownerStr, looseNfts);
 }
 
 const readTransactions = async (walletAddress: Address,
@@ -183,8 +210,11 @@ const getNftData = async (nftAddress: Address): Promise<FeGetNftData | undefined
             return {};
         }
         const inited = stack.readBoolean();
+        console.log(`Inited: ${inited}`);
         const index = stack.readNumber();
+        console.log(`Index: ${index}`);
         const collection = stack.readAddress();
+        console.log(`Collection: ${collection.toString({testOnly})}`);
         const owner = stack.readAddress();
 
         return {

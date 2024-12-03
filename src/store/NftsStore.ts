@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { CollectionType, Nft, NftsHistory, NftStore, SimpleTransactionHistory, PROCESSED, FOUND, Stores } from "../lib/Types";
+import { CollectionType, Nft, NftsHistory, NftStore, SimpleTransactionHistory, PROCESSED, FOUND, Stores, BEUniverses } from "../lib/Types";
 import { Address } from "@ton/core";
-import { checkNftOwner, digForNewNfts } from '../workers/WonTonNftTools';
+import { checkNftOwner, digForNewNfts, requestNfts } from '../workers/WonTonNftTools';
 
 export const testOnly = import.meta.env.VITE_TEST_ONLY === 'true' || true;
 const new_nft_time_span = 30 * 60 * 1000;
@@ -61,6 +61,25 @@ export const useNftsStore = create<NftStore>()(
                                 nfts: { ...store.nfts, [key]: newNft },
                                 transactions: store.transactions,
                                 newNft: checkNewNft(newNft)
+                            },
+                        },
+                    });
+                },
+                addNfts: (walletAddressStr, newNfts) => {
+                    const store = get().store(walletAddressStr);
+                    const newNftsMap: NftsHistory = {}
+                    newNfts.forEach( (nft) => {
+                        const key: string = createNftIndex(nft.collection_type, nft.wonton_power, nft.nft_index);
+                        newNftsMap[key] = nft;
+                    });
+
+                    set({
+                        storesRegistry: {
+                            ...get().storesRegistry,
+                            [walletAddressStr]: {
+                                nfts: { ...store.nfts, ...newNftsMap },
+                                transactions: store.transactions,
+                                newNft: store.newNft
                             },
                         },
                     });
@@ -127,6 +146,10 @@ export const useNftsStore = create<NftStore>()(
                     const walletAddressStr = walletAddress.toString({testOnly});
                     console.log(`Poling Universes...`)
                     await digForNewNfts(walletAddress, walletAddressStr, get);
+                },
+                pollNft: async (walletAddress: Address, universes: BEUniverses): Promise<void> => {
+                    console.log(`Poling Universes...`)
+                    await requestNfts(walletAddress, universes, get);
                 },
                 updateNftOwner: async (walletAddress: Address): Promise<void> => {
                     const walletAddressStr = walletAddress.toString({testOnly});
