@@ -25,12 +25,11 @@ export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClos
   return (
     <Drawer
       title=<><AccentB>Wontopia</AccentB> Universes Description</>
-      placement='bottom'
+      placement='right'
       size='large'
       onClose={onClose}
       open={isOpen}
-      key='bottom'
-      styles={{ body: { paddingTop: '0px', marginTop: '0px', paddingLeft: '20px', paddingRight: '20px' }}}>
+      key='bottom'>
       <div className='disclaimer'>
         <Divider orientation="left" plain><b>Refresh Universe</b></Divider>
         <p>

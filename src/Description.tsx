@@ -18,7 +18,7 @@ export const Description = ({isOpen, onClose }: {isOpen: boolean, onClose: () =>
   return (
     <Drawer
       title=<><AccentB>Wontopia</AccentB> Description</>
-      placement='bottom'
+      placement='right'
       size='large'
       onClose={onClose}
       open={isOpen}
