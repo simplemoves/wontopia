@@ -1,8 +1,20 @@
 import { Button, Drawer } from 'antd';
 import { AccentB, TON } from './Typography';
+import { useNftsStore } from './store/NftsStore';
+import { useCallback, useEffect, useState } from 'react';
 // import { Lore } from './Lore';
 
-export const Description = ({isOpen, onClose, onClearCache}: {isOpen: boolean, onClose: () => void, onClearCache: () => void}) => {
+export const Description = ({isOpen, onClose }: {isOpen: boolean, onClose: () => void }) => {
+  const nftStore = useNftsStore();
+
+  const clearCache = useCallback(() => nftStore.clearStorage(), [nftStore]);
+  const [storageIsEmpty, setStorageIsEmpty] = useState(true);
+  useEffect(() => {
+    setStorageIsEmpty(nftStore.storageIsEmpty());
+  }, [nftStore])
+  
+  // const storageIsEmpty = useCallback(() => nftStore.storageIsEmpty(), [nftStore]);
+  
   return (
     <Drawer
       title=<><AccentB>Wontopia</AccentB> Description</>
@@ -40,11 +52,19 @@ export const Description = ({isOpen, onClose, onClearCache}: {isOpen: boolean, o
       </em></p>
       {/* <Lore /> */}
       <p>
-        <Button color="default" variant="solid" shape='round' onClick={() => onClearCache()}
-              style={{ 
-                  backgroundColor: '#1C1C1C',
-                  borderColor: '#1C1C1C',
-                  color: 'silver' }}>
+        <Button
+              disabled={storageIsEmpty}
+              size="small"
+              type="dashed"
+              // color="default"
+              // variant="solid"
+              shape='round'
+              onClick={clearCache}
+              // style={{ 
+              //     backgroundColor: '#1C1C1C',
+              //     borderColor: '#1C1C1C',
+              //     color: 'silver' }}>
+              >
           Clear Cache 
         </Button>
       </p>

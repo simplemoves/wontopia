@@ -21,5 +21,5 @@ export const App = () => {
     }
   }, [walletAddress, nftStore]);
 
-  return !(ready && walletAddress) ? <Disclaimer clearStorage={nftStore.clearStorage}/> : <Game ready={ready} walletAddress={walletAddress}/>
+  return !(ready && walletAddress) ? <Disclaimer/> : <Game ready={ready} walletAddress={walletAddress}/>
 }

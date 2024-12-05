@@ -5,7 +5,7 @@ import { Description } from "./Description";
 import { Accent } from "./Typography";
 import { Wontopia } from "./Wontopia";
 
-export const Disclaimer = ({ clearStorage }: { clearStorage: () => void }) => {
+export const Disclaimer = () => {
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => {
     setOpen(false);
@@ -38,7 +38,7 @@ export const Disclaimer = ({ clearStorage }: { clearStorage: () => void }) => {
         </ul>
       </span>
       <Button onClick={onOpen} block>I want to know more!</Button>
-      <Description isOpen={open}  onClose={onClose} onClearCache={() => clearStorage()}/>
+      <Description isOpen={open}  onClose={onClose} />
       <p className='disclaimer'>To enter the Game, simply press the button and connect your wallet.
         Not sure what a wallet is or how secure it is?
         Just press the button and select the help icon to learn more about wallets and their different types.

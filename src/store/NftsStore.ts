@@ -167,9 +167,8 @@ export const useNftsStore = create<NftStore>()(
                         }
                     }
                 },
-                clearStorage: () => { set({ storesRegistry: { } }) }
-
-                // cleanOldRecords: (digDepthHours: number) => set({ transactions: cleanOldRecords(get().transactions, digDepthHours)}),
+                clearStorage: () => { set({ storesRegistry: { } }) },
+                storageIsEmpty: () => !(Object.keys(get().storesRegistry).length > 0)
             }),
             {
                 name: `nfts-storage`,

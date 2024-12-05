@@ -54,38 +54,40 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
   }, [setOpen]);
 
   return (
-    <Flex gap='small' align='start' vertical>
-      <Wontopia />
-
-      <Flex vertical={false} gap='large' align='center' className="game">
-          <div className='connected'>Connected to the wallet</div>   
-          <Button color="default" variant="solid" shape='round' icon={<ApiOutlined />} onClick={disconnectWallet} style={{ color: 'gray'}}>
-            Disconnect
-          </Button>         
-      </Flex>
-      <Paragraph copyable className="address">{walletAddress.toString({testOnly})}</Paragraph>
-      <Divider variant="dotted" style={{ borderColor: 'silver' }}>
-        <CCaption>Chose universe</CCaption>
-      </Divider>
-
-      <Flex vertical={false} gap="small" align='flex-start'>
-        <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} overlayClassName="custom-dropdown">
-          <Button color="default" variant="solid" >
-            <Space>
-              <div className="connected" style={{paddingTop: '3px'}}>Universe {universes.wonTonPower}</div>
-              <DownOutlined style={{ color: '#E60000' }}/>
-            </Space>
-          </Button>
-        </Dropdown>          
-        <Button color="default" variant="solid" shape='circle' onClick={onOpen} icon={<QuestionCircleOutlined />}  style={{ color: '#E60000' }}/>
-        { wontonPower === 0 ? (<PlayButton sendBet={contract.sendBet} />) : null }
-
-      </Flex>
+    <>
       <UniversesDescription isOpen={open}  onClose={onClose}/>      
+      <Flex gap='small' align='start' vertical>
+        <Wontopia />
 
-      {ready && walletAddress ? (
-        <NftCollections walletAddress={walletAddress} universes={universes} />
-      ) : null }
-    </Flex>
+        <Flex vertical={false} gap='large' align='center' className="game">
+            <div className='connected'>Connected to the wallet</div>   
+            <Button color="default" variant="solid" shape='round' icon={<ApiOutlined />} onClick={disconnectWallet} style={{ color: 'gray'}}>
+              Disconnect
+            </Button>         
+        </Flex>
+        <Paragraph copyable className="address">{walletAddress.toString({testOnly})}</Paragraph>
+        <Divider variant="dotted" style={{ borderColor: 'silver' }}>
+          <CCaption>Chose universe</CCaption>
+        </Divider>
+
+        <Flex vertical={false} gap="small" align='flex-start'>
+          <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} overlayClassName="custom-dropdown">
+            <Button color="default" variant="solid" >
+              <Space>
+                <div className="connected" style={{paddingTop: '3px'}}>Universe {universes.wonTonPower}</div>
+                <DownOutlined style={{ color: '#E60000' }}/>
+              </Space>
+            </Button>
+          </Dropdown>          
+          <Button color="default" variant="solid" shape='circle' onClick={onOpen} icon={<QuestionCircleOutlined />}  style={{ color: '#E60000' }}/>
+          { wontonPower === 0 ? (<PlayButton sendBet={contract.sendBet} />) : null }
+
+        </Flex>
+
+        {ready && walletAddress ? (
+          <NftCollections walletAddress={walletAddress} universes={universes} />
+        ) : null }
+      </Flex>
+    </>
   );
 }

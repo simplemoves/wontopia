@@ -202,6 +202,7 @@ export const UpdateNftOwnerFunctionSchema = z.function().args(z.custom<Address>(
 export const FilteredNftsFunctionSchema = z.function().args(z.string(), CollectionTypeSchema, z.number()).returns(NftsHistorySchema);
 export const NewNftFunctionSchema = z.function().args(z.string(), CollectionTypeSchema).returns(NftSchema.optional());
 export const ClearStorageFunctionSchema = z.function().args().returns(z.void());
+export const StorageIsEmptyFunctionSchema = z.function().args().returns(z.boolean());
 
 export const NftStoreSchema = z.object({
   storesRegistry: StoreRegistrySchema,
@@ -221,7 +222,8 @@ export const NftStoreSchema = z.object({
   updateNftOwner: UpdateNftOwnerFunctionSchema,
   filteredNfts: FilteredNftsFunctionSchema,
   newNft: NewNftFunctionSchema,
-  clearStorage: ClearStorageFunctionSchema
+  clearStorage: ClearStorageFunctionSchema,
+  storageIsEmpty: StorageIsEmptyFunctionSchema
 });
 
 ////////////////////////////////
