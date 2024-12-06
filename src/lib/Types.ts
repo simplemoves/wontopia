@@ -11,10 +11,12 @@ export const CollectionTypeSchema = z.union([
 export const NFT = "NFT";
 export const NON_NFT = "NON_NFT";
 export const NON_MY_NFT = "NON_MY_NFT";
+export const NFT_BURN_REQUEST = "NFT_BURN_REQUEST";
 export const NftTypeSchema = z.union([
     z.literal(NFT),
     z.literal(NON_NFT),
     z.literal(NON_MY_NFT),
+    z.literal(NFT_BURN_REQUEST),
 ]);
 
 export const FOUND = "FOUND";
@@ -24,8 +26,24 @@ export const TransactionHistoryItemStateSchema = z.union([
     z.literal(PROCESSED),
 ]);
 
-export const NonNftSchema = z.object({
+export const NONEXIST = "nonexist";
+export const UNINITIALIZED = "uninitialized";
+export const ACTIVE = "active";
+export const FROZEN = "frozen";
+export const SmartContractStatusSchema = z.union([
+    z.literal(NONEXIST),
+    z.literal(UNINITIALIZED),
+    z.literal(ACTIVE),
+    z.literal(FROZEN),
+]);
+
+export const NftStateSchema = z.object({
   type: NftTypeSchema,
+  updated_at: z.string().date()
+});
+
+export const NonNftSchema = z.object({
+  state: NftStateSchema,
 });
 
 export const NftMetaAttributesSchama = z.object({
@@ -41,7 +59,7 @@ export const NftMetaSchema = z.object({
 });
 
 export const NftSchema = z.object({
-  type: NftTypeSchema,
+  state: NftStateSchema,
   nft_address: z.string().min(1),
   owner_address: z.string().min(1),
   nft_index: z.number().min(0),
@@ -184,6 +202,16 @@ export const NftItemsResponseSchema = z.object({
   nft_items: NftItemResponseSchema.array()
 });
 
+export const AddressInformationResponseSchema = z.object({
+  balance: z.number(),
+  code: z.string().optional(),
+  data: z.string().optional(),
+  last_transaction_lt: z.string(),
+  last_transaction_hash: z.string(),
+  frozen_hash: z.string().optional(),
+  status: SmartContractStatusSchema
+});
+
 export const StoreRegistrySchema = z.record(z.string(), StoresSchema);
 export const GetStoreSchema = z.function().args(z.string()).returns(StoresSchema);
 export const GetTransactionsSchema = z.function().args(z.string()).returns(SimpleTransactionHistorySchema);
@@ -195,6 +223,8 @@ export const AddNftsFunctionSchema = z.function().args(z.string(), NftSchema.arr
 export const DeleteNftFunctionSchema = z.function().args(z.string(), z.string()).returns(z.void());
 export const MarkTransactionAsProcessedSchema = z.function().args(z.string(), z.string()).returns(z.void());
 export const MarkNftAsNotMyNftSchema = z.function().args(z.string(), z.string(), z.custom<Address>()).returns(z.void());
+export const MarkNftForBurnSchema = z.function().args(z.string(), NftSchema).returns(z.void());
+export const MarkNftForBetSchema = z.function().args(z.string(), NftSchema).returns(z.void());
 export const AnyNotProcessesTransactionsSchema = z.function().args(z.string()).returns(z.boolean());
 export const PollFunctionSchema = z.function().args(z.custom<Address>()).returns(z.promise(z.void()));
 export const PollNftFunctionSchema = z.function().args(z.custom<Address>(), BEUniversesSchema).returns(z.promise(z.void()));
@@ -216,6 +246,8 @@ export const NftStoreSchema = z.object({
   deleteNft: DeleteNftFunctionSchema,
   markTransactionAsProcessed: MarkTransactionAsProcessedSchema,
   markNftAsNotMyNft: MarkNftAsNotMyNftSchema,
+  markNftForBurn: MarkNftForBurnSchema,
+  markNftForBet: MarkNftForBetSchema,
   anyNotProcessedTransactions: AnyNotProcessesTransactionsSchema,
   poll: PollFunctionSchema,
   pollNft: PollNftFunctionSchema,
@@ -251,14 +283,15 @@ export type NftItemWontonData = z.infer<typeof NftItemWontonDataSchema>;
 export type NftMetaAttributes = z.infer<typeof NftMetaAttributesSchama>;
 export type NftItemsResponse = z.infer<typeof NftItemsResponseSchema>;
 export type NftItemResponse = z.infer<typeof NftItemResponseSchema>;
+export type AddressInformationResponse = z.infer<typeof AddressInformationResponseSchema>;
 
-export const NOT_NFT: NonNft = { type: 'NON_NFT' };
+export const NOT_NFT: NonNft = { state: { type: 'NON_NFT', updated_at: new Date().getTime().toString() } };
 
 ////////////////////////////////
 // Function helpers
 ////////////////////////////////
 export const isNft = (nft: Nft | NonNft): nft is Nft => {
-  return !!nft && nft.type == NFT;
+  return !!nft && nft.state.type == NFT;
 }
 
 export const isNftData = (nftData: GetNftData|undefined): nftData is GetNftData => {
@@ -276,7 +309,10 @@ export const mapResponseToNfts = (nftItems: NftItemResponse[], cType: Collection
 
 export const mapResponseToNft = (nftItem: NftItemResponse, cType: CollectionType, wontonPower: number, nftMeta: NftMeta): Nft => {
   return {
-      type: 'NFT',
+      state: {
+        type: 'NFT',
+        updated_at: new Date().getTime().toString(),
+      },
       nft_address: nftItem.address,
       owner_address: nftItem.owner_address,
       nft_index: nftItem.index,

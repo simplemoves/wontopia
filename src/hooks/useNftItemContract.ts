@@ -15,21 +15,25 @@ export function useNftItemContract(nftItem: Address) {
         return client.open(contract);
     }, [])
 
-    const sendBetNft = useCallback<() => Promise<void>>(async () => {
+    const sendBetNft = useCallback<() => Promise<boolean|undefined>>(async () => {
         // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
         return tryNTimes(async () => {
             const openedContract = await openContract(contract);
             const queryId = new Date().getTime();
-            return await openedContract.sendBetNft(sender, { queryId, value: toNano("0.05") });
+            return await openedContract
+                .sendBetNft(sender, { queryId, value: toNano("0.05") })
+                .then(() => true);
         }, 3, 100);
     }, [ contract, sender, openContract ]);
 
-    const sendBurn = useCallback<() => Promise<void>>(async () => {
+    const sendBurn = useCallback<() => Promise<boolean|undefined>>(async () => {
         // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
         return tryNTimes(async () => {
             const openedContract = await openContract(contract);
             const queryId = new Date().getTime();
-            return await openedContract.sendBurn(sender, { queryId, value: toNano("0.05") });
+            return await openedContract
+                .sendBurn(sender, { queryId, value: toNano("0.05") })
+                .then(() => true);
         }, 3, 100);
     }, [ contract, sender, openContract ]);
 

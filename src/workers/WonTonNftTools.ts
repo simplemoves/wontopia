@@ -4,12 +4,14 @@ import { BEUniverses, CollectionInfo, collectionTypeCaptions, FeGetNftData, FOUN
 import { isTonAddress, possiblyNftTransfer } from "../lib/TonUtils";
 import axios from "axios";
 import { globalUniversesHolder } from "../store/GlobalUniversesHolder.ts";
-import { testOnly } from "../store/NftsStore.ts";
+import { createNftIndex, testOnly } from "../store/NftsStore.ts";
 import { getErrorMessage } from "../lib/ErrorHandler.ts";
 import { wonTonClientProvider } from "../providers/WonTonClientProvider.ts";
 import { tryNTimes } from "../lib/PromisUtils.ts";
 import { DescriptionsProps } from "antd";
 import { wonTonHttpClient } from "../providers/WontopiaTonClientProvider.ts";
+
+const client = wonTonHttpClient();
 
 export const digForNewNfts = async (walletAddress: Address,
     walletAddressStr: string,
@@ -40,12 +42,23 @@ const readNfts = async (walletAddress: Address,
     const ownerStr = walletAddress.toString({testOnly});
     const wontonPower = universes.wonTonPower + 1;
     
-    const client =  await wonTonHttpClient();
-    
     const winNfts = await client.getNftItems('WIN', ownerStr, universes.winUniverse.collection.toRawString(), wontonPower);
-    get().addNfts(ownerStr, winNfts);
+    await processNfts(ownerStr, winNfts, get);
     const looseNfts = await client.getNftItems('LOOSE', ownerStr, universes.looseUniverse.collection.toRawString(), wontonPower);
-    get().addNfts(ownerStr, looseNfts);
+    await processNfts(ownerStr, looseNfts, get);
+}
+
+const processNfts = async (ownerStr: string, nfts: Nft[], get: () => NftStore) => {
+    for (const nft of nfts) {
+        const isActive = await client.isNftActive(nft.nft_address);
+        if (!isActive) {
+            const key: string = createNftIndex(nft.collection_type, nft.wonton_power, nft.nft_index);
+            get().deleteNft(ownerStr, key);
+        } else {
+            get().addNft(ownerStr, nft);
+        }
+    }
+
 }
 
 const readTransactions = async (walletAddress: Address,
@@ -152,7 +165,10 @@ const handleTx = async (
                 console.log(`wontonPower: ${collectionInfo.wonTonPower} | Found new ${collectionInfo.cType} NFT Transaction for #: ${nftData.index}`);
                 const nft_meta = await fetchMeta(collectionInfo, nftData.index);
                 return nft_meta ? {
-                    type: NFT,
+                    state: {
+                        type: NFT,
+                        updated_at: new Date().getTime().toString()
+                    },
                     nft_address: nftAddress.toRawString(),
                     owner_address: nftData.owner.toRawString(),
                     nft_index: nftData.index,
@@ -239,25 +255,35 @@ const tryGetNftData = async (nftAddress: Address) =>
 export const mapNftToDescriptionProps = (nft: Nft): DescriptionsProps['items'] => {
     return [
         {
+            label: 'Nft Name',
+            children: nft.nft_meta?.name,
+        },
+        {
             label: 'Collection Type',
             children: collectionTypeCaptions[nft.collection_type],
         },
         {
-            label: 'Created At',
-            children: new Date(+nft.created_at).toISOString(),
+            label: 'Nft Index',
+            children: nft.nft_meta?.attributes.find((attr) => attr.trait_type === 'nft_index')?.value,
         },
-        {
-            label: 'Description',
-            children: nft.nft_meta?.description,
-        },
+        // {
+        //     label: 'Created At',
+        //     children: new Date(+nft.created_at).toISOString(),
+        // },
+        // {
+        //     label: 'Description',
+        //     children: nft.nft_meta?.description,
+        // },
     ];
 }
 
 export const mapAttrToDescriptionProps = (attributes: NftMetaAttributes[]): DescriptionsProps['items'] => {
-    return attributes.map((attribute) => {
-        return {
-            label: attribute.trait_type,
-            children: attribute.value,
-        }        
-    });
+    return attributes
+        .filter((attribute) => attribute.trait_type === 'nft_index')
+        .map((attribute) => {
+            return {
+                label: attribute.trait_type,
+                children: attribute.value,
+            }        
+        });
 }

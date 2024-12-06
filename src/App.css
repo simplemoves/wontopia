@@ -172,11 +172,11 @@
 }
 
 .nft-caption {
-  padding-right: 60px;
+  /* padding-right: 60px; */
   font-family: 'BebasNeue', Arial, serif;
-  font-size: 6vw;
+  font-size: 5vw;
   color: silver;
-  font-weight: 600; 
+  font-weight: 500;
 }
 
 .nft-description-title {

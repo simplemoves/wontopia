@@ -1,15 +1,20 @@
 import { getErrorMessage } from "../lib/ErrorHandler";
 import { RateLimiter, tryNTimes } from "../lib/PromisUtils";
-import { CollectionType, mapResponseToNft, Nft, NftItemResponse, NftItemsResponse, NftMeta } from "../lib/Types";
+import { requesAddressInformation, requestNftItems } from "../lib/ToncenterApi";
+import { CollectionType, mapResponseToNft, Nft, NftMeta } from "../lib/Types";
 import axios from "axios";
 
 const rateLimiterObj = new RateLimiter(2000);
 
-export const wonTonHttpClient = async () => {
+export const wonTonHttpClient = () => {
     return {
         getNftItems: async (cType: CollectionType, ownerStr: string, collectionStr: string, wontonPower: number): Promise<Nft[]> => {
             await rateLimiterObj.limit();
             return await readNfts(cType, ownerStr, collectionStr, wontonPower);
+        },
+        isNftActive: async (nftAddrStr: string): Promise<boolean> => {
+            await rateLimiterObj.limit();
+            return await isNftActive(nftAddrStr);
         }
     }
 };
@@ -19,7 +24,7 @@ const readNfts = async (cType: CollectionType,
         collectionStr: string,
         wontonPower: number) => {
     const innerRead = async (limit: number = 30, offset: number = 0, result: Nft[] = []): Promise<Nft[]> => {
-        const newNfts = await tryNTimes(async () => requestNftsList(ownerStr, collectionStr, limit, offset), 5, 500);
+        const newNfts = await tryNTimes(async () => requestNftItems(ownerStr, collectionStr, limit, offset), 5, 500);
         
         console.log(`Received ${newNfts?.length} nfts`);
         if (!newNfts) { return result; }
@@ -42,24 +47,6 @@ const readNfts = async (cType: CollectionType,
     return await innerRead();
 }
 
-const requestNftsList = async (owner: string, collection: string, limit: number = 20, offset: number = 0): Promise<NftItemResponse[] | undefined> => {
-    const response = await axios.get<NftItemsResponse>("https://toncenter.com/api/v3/nft/items", {
-        params: {
-            owner_address: owner,
-            collection_address: collection,
-            limit: limit,
-            offset: offset
-        }
-    });
-
-    if (response.status != 200) {
-        console.error("Error getting NFT Items");
-        return;        
-    }
-
-    return response.data.nft_items;
-}
-
 const fetchMeta = async (uri: string): Promise<NftMeta | undefined> => {
     try {
         const response = await axios.get<NftMeta>(uri);
@@ -69,4 +56,9 @@ const fetchMeta = async (uri: string): Promise<NftMeta | undefined> => {
         console.error(`Error fetching meta: ${uri}, error: ${msg}`);
         return undefined;
     }
+}
+
+const isNftActive = async (nftAddrStr: string): Promise<boolean> => {
+    const nftStatus = await tryNTimes(async () => requesAddressInformation(nftAddrStr), 5, 500);
+    return nftStatus?.status === 'active';
 }

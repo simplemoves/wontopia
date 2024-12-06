@@ -14,7 +14,7 @@ export function NftCollection({ walletAddressStr, cType, nfts }: { walletAddress
                 <Col><CCaption>{caption}</CCaption></Col>
             </Row>
 
-            <NftItems walletAddressStr={walletAddressStr} cType={cType} nfts={sorted}/>
+            <NftItems walletAddressStr={walletAddressStr} nfts={sorted}/>
         </>     
     )
 }

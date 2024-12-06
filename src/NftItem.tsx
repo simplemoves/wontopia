@@ -1,16 +1,12 @@
 import { Image } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Nft } from "./lib/Types";
-import { useNftItemContract } from "./hooks/useNftItemContract";
-import { Address } from "@ton/core";
 import { NftItemPreview } from "./NftItemPreview";
 
-export function NftItem({ nft, isNew }: { nft: Nft, isNew: boolean }) {
-    const contract = useNftItemContract(Address.parse(nft.nft_address))
+export function NftItem({ nft, isNew, markNft }:{ nft: Nft, isNew: boolean, markNft: { forBurn: (nft: Nft) => void, forBet: (nft: Nft) => void }}) {
     const [previewVisible, setPreviewVisible] = useState(false);
-    const closePreview = useCallback(() => { setPreviewVisible(false); }, [setPreviewVisible]);
-
     const imageUrl = useMemo(() => nft.nft_meta?.image, [ nft ]);
+
     return (
         <Image
             rootClassName={isNew ? "new-nft" : ""}
@@ -20,7 +16,7 @@ export function NftItem({ nft, isNew }: { nft: Nft, isNew: boolean }) {
                 visible: previewVisible,
                 onVisibleChange: (vis: boolean) => setPreviewVisible(vis),
                 destroyOnClose: false,
-                imageRender: () => (<NftItemPreview nft={nft} sendBetNft={contract.sendBetNft} sendBurnNft={contract.sendBurn} closePreview={closePreview}/>),
+                imageRender: () => (<NftItemPreview nft={nft} markNft={markNft} setPreviewVisible={setPreviewVisible} />),
                 toolbarRender: () => null,
             }}
         />

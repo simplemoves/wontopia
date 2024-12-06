@@ -1,15 +1,14 @@
 import { Button } from "antd";
-import { useTonConnect } from "./hooks/useTonConnect";
 
-export function PlayButton({ sendBet }: { sendBet: () => Promise<void> }) {
-    const { connected } = useTonConnect();
-
-    return connected && (
-        <Button color="default" variant="solid" shape='round' onClick={() => sendBet()}
-            style={{ 
-                backgroundColor: '#B40000',
-                borderColor: '#B40000',
-                color: 'black' }}>
+export function PlayButton({ sendBet, disabled }: { sendBet: () => Promise<void>, disabled: boolean }) {
+    return (
+        <Button
+            disabled={disabled}
+            color="default"
+            variant="solid"
+            shape='round'
+            onClick={sendBet}
+            style={{ color: disabled ? '#868686' : '#E60000' }}>
             Let's Play!
         </Button>
     );

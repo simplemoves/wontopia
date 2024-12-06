@@ -54,6 +54,14 @@ export const useNftsStore = create<NftStore>()(
                 addNft: (walletAddressStr, newNft) => {
                     const store = get().store(walletAddressStr);
                     const key: string = createNftIndex(newNft.collection_type, newNft.wonton_power, newNft.nft_index)
+                    const existNft = store.nfts[key];
+                    const now = new Date().getTime();
+                    if (existNft &&
+                        existNft.state.type === 'NFT_BURN_REQUEST' &&
+                        (now - +existNft.state.updated_at) < 1000 * 30) {
+                        return;
+                    }
+
                     set({
                         storesRegistry: {
                             ...get().storesRegistry,
@@ -122,7 +130,42 @@ export const useNftsStore = create<NftStore>()(
                             storesRegistry: {
                                 ... get().storesRegistry,
                                 [walletAddressStr]: {
-                                    nfts: { ... store.nfts, [nftKey]: { ...updatedNft, type: 'NON_MY_NFT', owner_address: newOwner?.toString({testOnly}) } },
+                                    nfts: { 
+                                        ... store.nfts,
+                                        [nftKey]: { 
+                                            ...updatedNft,
+                                            state: {
+                                                type: 'NON_MY_NFT',
+                                                updated_at: new Date().getTime().toString()
+                                            },
+                                            owner_address: newOwner?.toString({testOnly})
+                                        }
+                                    },
+                                    transactions: store.transactions
+                                },
+                            }
+                        })
+                    }
+                },                
+                markNftForBurn: (walletAddressStr, nft) => {
+                    const store = get().store(walletAddressStr);
+                    const key: string = createNftIndex(nft.collection_type, nft.wonton_power, nft.nft_index)
+                    const updatedNft = store.nfts[key];
+                    if (updatedNft) {
+                        set({
+                            storesRegistry: {
+                                ... get().storesRegistry,
+                                [walletAddressStr]: {
+                                    nfts: { 
+                                        ... store.nfts,
+                                        [key]: { 
+                                            ...updatedNft,
+                                            state: {
+                                                type: 'NFT_BURN_REQUEST',
+                                                updated_at: new Date().getTime().toString()
+                                            }
+                                        }
+                                    },
                                     transactions: store.transactions
                                 },
                             }
@@ -136,7 +179,10 @@ export const useNftsStore = create<NftStore>()(
                     const store = get().store(walletAddressStr);
                     const response: NftsHistory = {};
                     for (const [key, nft] of Object.entries(store.nfts)) {
-                        if (nft.collection_type === cType && nft.type === 'NFT' && nft.wonton_power == wontonPower) {
+                        if (nft.collection_type === cType && 
+                            (nft.state.type === 'NFT' || 
+                            nft.state.type === 'NFT_BURN_REQUEST') && 
+                            nft.wonton_power == wontonPower) {
                             response[key] = nft;
                         }
                     }
