@@ -80,7 +80,7 @@ export const Game = ({ ready, walletAddress }: { ready: boolean, walletAddress: 
             </Button>
           </Dropdown>          
           <Button color="default" variant="solid" shape='circle' onClick={onOpen} icon={<QuestionCircleOutlined />}  style={{ color: '#E60000' }}/>
-          { wontonPower === 0 ? (<PlayButton sendBet={contract.sendBet} />) : null }
+          { wontonPower === 0 ? (<PlayButton disabled={wontonPower !== 0} sendBet={contract.sendBet} />) : null }
 
         </Flex>
 

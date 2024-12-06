@@ -1,10 +1,10 @@
 import './App.css';
-import { Card, Descriptions, Flex, Image, Space } from "antd";
+import { Card, Descriptions, Flex, Image } from "antd";
 import { Nft } from './lib/Types';
 import { PlayButton } from './PlayButton';
 import { BurnButton } from './BurnButton';
-import { NftAttributes } from './NftAttributes';
-import { NftCaption } from './Typography';
+// import { NftAttributes } from './NftAttributes';
+// import { NftCaption } from './Typography';
 import { useCallback, useMemo } from 'react';
 import { mapNftToDescriptionProps } from './workers/WonTonNftTools';
 import { useNftItemContract } from './hooks/useNftItemContract';
