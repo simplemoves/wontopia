@@ -11,11 +11,13 @@ export const CollectionTypeSchema = z.union([
 export const NFT = "NFT";
 export const NON_NFT = "NON_NFT";
 export const NON_MY_NFT = "NON_MY_NFT";
+export const NFT_BET_REQUEST = "NFT_BET_REQUEST";
 export const NFT_BURN_REQUEST = "NFT_BURN_REQUEST";
 export const NftTypeSchema = z.union([
     z.literal(NFT),
     z.literal(NON_NFT),
     z.literal(NON_MY_NFT),
+    z.literal(NFT_BET_REQUEST),
     z.literal(NFT_BURN_REQUEST),
 ]);
 

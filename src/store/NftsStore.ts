@@ -172,6 +172,31 @@ export const useNftsStore = create<NftStore>()(
                         })
                     }
                 },
+                markNftForBet: (walletAddressStr, nft) => {
+                    const store = get().store(walletAddressStr);
+                    const key: string = createNftIndex(nft.collection_type, nft.wonton_power, nft.nft_index)
+                    const updatedNft = store.nfts[key];
+                    if (updatedNft) {
+                        set({
+                            storesRegistry: {
+                                ... get().storesRegistry,
+                                [walletAddressStr]: {
+                                    nfts: { 
+                                        ... store.nfts,
+                                        [key]: { 
+                                            ...updatedNft,
+                                            state: {
+                                                type: 'NFT_BET_REQUEST',
+                                                updated_at: new Date().getTime().toString()
+                                            }
+                                        }
+                                    },
+                                    transactions: store.transactions
+                                },
+                            }
+                        })
+                    }
+                },
                 anyNotProcessedTransactions: (walletAddressStr) => {
                     return Object.values(get().store(walletAddressStr).transactions).some((nft)=> nft.state === FOUND);
                 },
