@@ -1,5 +1,5 @@
 import './Wontopia.css'
-import { Col, Flex, Row } from "antd";
+import { Col, Row } from "antd";
 
 export const Wontopia = () => {
   return (
