@@ -286,6 +286,7 @@ export type NftMetaAttributes = z.infer<typeof NftMetaAttributesSchama>;
 export type NftItemsResponse = z.infer<typeof NftItemsResponseSchema>;
 export type NftItemResponse = z.infer<typeof NftItemResponseSchema>;
 export type AddressInformationResponse = z.infer<typeof AddressInformationResponseSchema>;
+export type BEUniversesHolder = z.infer<typeof BEUniversesHolderSchema>;
 
 export const NOT_NFT: NonNft = { state: { type: 'NON_NFT', updated_at: new Date().getTime().toString() } };
 

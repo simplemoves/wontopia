@@ -1,27 +1,10 @@
 .caption {
-  /* background-color: green; */
-  align-items: baseline;
+  align-items: center;
   min-width: 100%;
 }
 
-.main-caption {
-  background-color: red;
-}
-
-.main-title {
-  font-family: 'BebasNeue', Arial, serif;
-  color: #B40000;
-  /* font-size: 5.8rem; */
-  font-size: 22vw;
-  line-height: 1.0;
-  font-weight: 700;
-}
-
-.version {
-  /* background-color: green; */
-  color: gray;
-  font-size: 5vw;
-  font-weight: 300;
+.universes-row {
+  min-width: 100%;
 }
 
 .disclaimer {
@@ -105,6 +88,13 @@
   font-family: 'BebasNeue', Arial, serif;
   font-size: 7vw;
   color: #B40000;
+  font-weight: 600;
+}
+
+.wallet-connected {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 7vw;
+  color: #b40000;
   font-weight: 600;
 }
 

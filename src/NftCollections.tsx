@@ -24,10 +24,10 @@ export function NftCollections({ walletAddress, universes }: { walletAddress: Ad
 
     return (
         <>
-            <Divider variant="dotted" style={{ borderColor: 'silver' }}>
-                <CCaption>Received NFTs {running ?
-                    <Spin indicator={<ReloadOutlined spin />} style={{ color: 'silver' }} size="large" /> :
-                    <ReloadOutlined style={{ color: 'silver' }} onClick={handleUpdate} />}
+            <Divider variant="dotted" style={{ borderColor: 'gray' }}>
+                <CCaption>Received NFTs&nbsp;&nbsp;{running ?
+                    <Spin indicator={<ReloadOutlined spin />} style={{ color: 'gray' }} size="large" /> :
+                    <ReloadOutlined style={{ color: 'gray' }} onClick={handleUpdate} />}
                 </CCaption>
             </Divider>
             <Row style={{ width: '100%' }} wrap={false} justify="center">
