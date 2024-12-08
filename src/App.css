@@ -4,6 +4,10 @@
   min-width: 100%;
 }
 
+.main-caption {
+  background-color: red;
+}
+
 .main-title {
   font-family: 'BebasNeue', Arial, serif;
   color: #B40000;

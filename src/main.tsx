@@ -5,9 +5,7 @@ import './index.css'
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
 import WebApp from '@twa-dev/sdk'
 import eruda from 'eruda'
-import { init } from '@telegram-apps/sdk';
 
-init();
 eruda.init();
 WebApp.ready();
 
