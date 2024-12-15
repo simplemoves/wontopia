@@ -1,0 +1,9 @@
+body {
+  margin: 0.6rem;
+  /* align-content: flex-start;
+  justify-content: center; */
+  color: rgba(255, 255, 255, 0.87);
+  background: rgb(40, 40, 40);
+  background: linear-gradient(180deg, rgb(40, 40, 42) 0%, rgba(80,80,82) 100%);
+  min-height: 100vh;
+}

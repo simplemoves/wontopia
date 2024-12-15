@@ -1,0 +1,14 @@
+@font-face {
+  font-family: 'BebasNeue';
+  src: url('assets/fonts/BebasNeue-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'TonFont';
+  src: url('assets/fonts/Inter-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Oxygen';
+  src: url('assets/fonts/Oxygen-Regular.ttf') format('truetype');
+}

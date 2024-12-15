@@ -1,0 +1,45 @@
+:root {
+  --dark: #1C1C1C;
+  --light-shadow: #202020;
+}
+
+.main-caption {
+  margin-top: 3vw;
+  margin-bottom: 4vw;
+  align-items: baseline;
+  align-content: end;
+  min-width: 100%;
+}
+
+.main-title {
+  display: grid;
+  grid-template-areas: overlap;
+  text-transform: uppercase;
+}
+
+.main-title > div {
+  line-height: 0.6;
+  padding-left: 3px;
+  padding-right: 3px;
+  background-clip: text;  
+  -webkit-background-clip: text;
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 20vw;
+  font-weight: 700;
+  grid-area: overlap;
+  letter-spacing: 3px;
+  -webkit-text-stroke: 4px transparent;
+}
+
+div.wontopia {
+  background-image: repeating-linear-gradient( 180deg,  
+    var(--light-shadow) 0%, 
+    var(--dark) 100%);
+  color: #B40000;
+}
+
+.version {
+  color: gray;
+  font-size: 5vw;
+  font-weight: 300;
+}

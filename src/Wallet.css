@@ -1,0 +1,13 @@
+/* In your CSS file or styled-components */
+.wallet-dropdown .ant-dropdown-menu {
+  background-color: black;
+}
+
+.wallet-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+  background-color: black;
+  color: gray;
+}
+
+.wallet-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:active {
+  color: red;
+}

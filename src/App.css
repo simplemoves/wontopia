@@ -1,0 +1,182 @@
+.caption {
+  align-items: center;
+  min-width: 100%;
+}
+
+.universes-row {
+  min-width: 100%;
+}
+
+.disclaimer {
+  font-family: 'Oxygen', Arial, serif;
+  flex-wrap: wrap;
+  font-size: 3.5vw;
+  /* background-color: red; */
+  /* width: 40%; */
+}
+
+.disclaimer-accent {
+  color: rgba(255, 255, 255);
+  font-family: 'BebasNeue', Arial, serif;
+  /* font-size: 5.8rem; */
+  font-size: 3.5vw;
+  font-weight: 700;
+}
+
+.disclaimer-accent-b {
+  color: rgb(60, 60, 60);
+  font-family: 'BebasNeue', Arial, serif;
+  /* font-size: 5.8rem; */
+  /* font-size: 4vw; */
+  /* font-size: 3.5vw; */
+  font-weight: 700;
+}
+
+.disclaimer-accent-g {
+  color: rgb(4, 223, 0);
+  /* font-size: 5.8rem; */
+  font-weight: 900;
+}
+
+.accent-c {
+  color: rgb(60, 60, 60);
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 3.5vw;
+  font-weight: 700;
+}
+
+.accent-t {
+  color: rgb(60, 60, 60);
+  /* font-family: 'BebasNeue', Arial, serif; */
+  font-size: 3vw;
+  font-weight: 300;
+}
+
+.ton {
+  color: #0098EA;
+  font-family: 'TonFont';
+  /* font-size: 4vw; */
+}
+
+.fees {
+  /* color: #a6a6a6; */
+  /* font-family: 'TonFont'; */
+  font-size: 3vw;
+  font-weight: 100;
+}
+
+.lore {
+  /* color: #a6a6a6; */
+  /* font-family: 'TonFont'; */
+  font-family: 'Oxygen', Arial, serif;
+  font-size: 2.5vw;
+  font-weight: 100;
+}
+
+.wontopia {
+  color: #B40000;
+  font-weight: 600;
+}
+
+.game {
+  /* align-items: center; */
+  /* background-color: magenta; */
+  min-width: 100%;
+}
+
+.letsdoit {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 7vw;
+  color: #B40000;
+  font-weight: 600;
+}
+
+.wallet-connected {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 7vw;
+  color: #b40000;
+  font-weight: 600;
+}
+
+.connected {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: #B40000;
+  font-weight: 600;
+}
+
+.address {
+  font-family: 'Oxygen', Arial, serif;
+  font-size: 2.7vw;
+  color: gray;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.collection-list {
+  max-width: 45%;
+  background-color: green;
+}
+
+.collection-caption {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 6vw;
+  color: gray;
+  font-weight: 600; 
+}
+
+.game-disclaimer {
+
+}
+
+.new-nft {
+  border: 2px solid green;
+}
+
+.dropdown {
+  background-color: black;
+}
+
+/* In your CSS file or styled-components */
+.custom-dropdown .ant-dropdown-menu {
+  background-color: #B40000;
+  color: black;
+}
+
+.custom-dropdown .ant-dropdown-menu:hover {
+  background-color: #B40000;
+  color: black;
+}
+
+.custom-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-selected {
+  color: silver;
+  background-color: black;
+}
+
+.custom-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  color: silver;
+  background-color: black;
+}
+
+.nft-preview {
+  color: silver;
+  text-align: left;
+  background: rgba(94,94,94,1);
+  background: linear-gradient(0deg, rgba(60,60,60,1) 0%, rgba(84,84,84,1) 100%);
+}
+
+.nft-caption {
+  /* padding-right: 60px; */
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: silver;
+  font-weight: 500;
+}
+
+.nft-description-title {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: #B40000;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
