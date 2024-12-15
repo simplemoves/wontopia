@@ -4,37 +4,42 @@
 }
 
 .main-caption {
-  margin-top: 3vw;
-  margin-bottom: 4vw;
+  display: flex;
+  flex-direction: row;
+  flex: auto;
   align-items: baseline;
-  align-content: end;
-  min-width: 100%;
+  flex-wrap: nowrap;
+  /*background-color: antiquewhite;*/
+  width: 100%;
 }
 
-.main-title {
+.spacer {
+  width: 100%;
+}
+
+.wontopia-container {
+  line-height: 1;
   display: grid;
-  grid-template-areas: overlap;
   text-transform: uppercase;
 }
 
-.main-title > div {
-  line-height: 0.6;
+.wontopia-container > div {
   padding-left: 3px;
   padding-right: 3px;
-  background-clip: text;  
+  background-clip: text;
   -webkit-background-clip: text;
   font-family: 'BebasNeue', Arial, serif;
   font-size: 20vw;
   font-weight: 700;
-  grid-area: overlap;
+  /*grid-area: overlap;*/
   letter-spacing: 3px;
   -webkit-text-stroke: 4px transparent;
 }
 
-div.wontopia {
-  background-image: repeating-linear-gradient( 180deg,  
-    var(--light-shadow) 0%, 
-    var(--dark) 100%);
+.wontopia {
+  background-image: repeating-linear-gradient( 180deg,
+  var(--light-shadow) 0%,
+  var(--dark) 100%);
   color: #B40000;
 }
 

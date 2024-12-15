@@ -1,11 +1,14 @@
 import './Wontopia.css'
-import { Col, Row } from "antd";
 
 export const Wontopia = () => {
-  return (
-    <Row wrap={false} className={'main-caption'}>
-      <Col className='main-title'><div className='wontopia'>WONTOPIA</div></Col>
-      <Col flex={"auto"}>&nbsp;</Col>
-      <Col className='version'>v0.1.0</Col>
-    </Row>);
+    return (
+        <div className={'main-caption'}>
+            <div className={'wontopia-container'}>
+                <div className={'wontopia'}>
+                    WONTOPIA
+                </div>
+            </div>
+            <div className={'spacer'}>&nbsp;</div>
+            <div className={'version'}>v0.1.0</div>
+        </div>);
 }
