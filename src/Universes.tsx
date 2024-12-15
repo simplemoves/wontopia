@@ -48,15 +48,15 @@ export const Universes = ({ onUniversesChange }: { onUniversesChange: (universes
           <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} overlayClassName="custom-dropdown">
             <Button color="default" variant="solid" >
               <Space>
-                <div className="connected" style={{paddingTop: '3px'}}>Universe {universes.wonTonPower}</div>
-                <DownOutlined style={{ color: '#B40000' }}/>
+                <div className="universe-dropdown" style={{paddingTop: '3px'}}>Universe {universes.wonTonPower}</div>
+                <DownOutlined style={{ color: 'gray' }}/>
               </Space>
             </Button>
           </Dropdown>
         </Col>
         <Col>
           &nbsp;
-          <Button color="default" variant="solid" shape='circle' onClick={onOpen} icon={<QuestionCircleOutlined />} style={{ color: '#B40000' }}/>
+          <Button color="default" variant="solid" shape='circle' onClick={onOpen} icon={<QuestionCircleOutlined />} style={{ color: 'gray' }}/>
         </Col>
         <Col flex={'auto'}>&nbsp;</Col>
         <Col>

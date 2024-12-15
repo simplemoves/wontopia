@@ -94,14 +94,21 @@
 .wallet-connected {
   font-family: 'BebasNeue', Arial, serif;
   font-size: 7vw;
-  color: #b40000;
+  color: gray;
   font-weight: 600;
 }
 
 .connected {
   font-family: 'BebasNeue', Arial, serif;
   font-size: 5vw;
-  color: #B40000;
+  color: black;
+  font-weight: 600;
+}
+
+.universe-dropdown {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: gray;
   font-weight: 600;
 }
 
