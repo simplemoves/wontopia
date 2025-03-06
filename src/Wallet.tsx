@@ -4,7 +4,7 @@ import { Address } from "@ton/core";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { Button, Dropdown, MenuProps } from "antd";
 import { useCallback, useMemo } from "react";
-import { testOnly } from "./store/NftsStore";
+import { testOnly } from "./lib/Constants.ts";
 
 export const Wallet = ({ walletAddress }: { walletAddress: Address }) => {
   const [ tonConnectUI ] = useTonConnectUI();

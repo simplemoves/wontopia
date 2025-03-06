@@ -28,8 +28,10 @@ export class WonTonContract implements Contract {
                 .storeUint(opts.provided_wonton_power, 8)
                 .endCell(),
             })
+            return true
         } catch (ex) {
             console.error(getErrorMessage(ex));
+            return false
         }
     }
 

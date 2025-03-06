@@ -47,7 +47,7 @@ const readNfts = async (cType: CollectionType,
     return await innerRead();
 }
 
-const fetchMeta = async (uri: string): Promise<NftMeta | undefined> => {
+export const fetchMeta = async (uri: string): Promise<NftMeta | undefined> => {
     try {
         const response = await axios.get<NftMeta>(uri);
         return response.data;

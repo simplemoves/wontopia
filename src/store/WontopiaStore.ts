@@ -3,15 +3,15 @@ import { devtools, persist } from 'zustand/middleware';
 import { CollectionType, Nft, NftsHistory, NftStore, SimpleTransactionHistory, PROCESSED, FOUND, Stores, BEUniverses } from "../lib/Types";
 import { Address } from "@ton/core";
 import { checkNftOwner, digForNewNfts, requestNfts } from '../workers/WonTonNftTools';
+import { testOnly } from "../lib/Constants.ts";
 
-export const testOnly = import.meta.env.VITE_TEST_ONLY === 'true' || true;
 const new_nft_time_span = 30 * 60 * 1000;
 const emptyStores= {
     nfts: {},
     transactions: {}
 };
 
-export const useNftsStore = create<NftStore>()(
+export const useWontopiaStore = create<NftStore>()(
     devtools(
         persist(
             (set, get) => ({

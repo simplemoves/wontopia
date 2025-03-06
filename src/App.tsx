@@ -2,24 +2,25 @@ import './App.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useTonWallet } from '@tonconnect/ui-react';
 import { tonAddress } from './lib/TonUtils';
-import { testOnly, useNftsStore } from './store/NftsStore';
+import { useWontopiaStore } from './store/WontopiaStore.ts';
 import { Disclaimer } from './Disclaimer';
 import { Game } from './Game';
+import { testOnly } from "./lib/Constants.ts";
 
 export const App = () => {
-  const nftStore = useNftsStore();
+  const wontopiaStore = useWontopiaStore();
   const wallet = useTonWallet();
   const walletAddress = useMemo(() => tonAddress(wallet?.account.address), [ wallet ])
   const [ ready, setReady ] = useState(false);
 
   useEffect(() => {
     if (walletAddress) {
-        nftStore.store(walletAddress.toString({ testOnly }));
+        wontopiaStore.store(walletAddress.toString({ testOnly }));
         setReady(true);
     } else {
         setReady(false);
     }
-  }, [walletAddress, nftStore]);
+  }, [walletAddress, wontopiaStore]);
 
   return !(ready && walletAddress)
     ? <Disclaimer/>

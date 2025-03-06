@@ -8,7 +8,7 @@ export const Wontopia = () => {
                     WONTOPIA
                 </div>
             </div>
-            <div className={'spacer'}>&nbsp;</div>
             <div className={'version'}>v0.1.0</div>
+            <div className={'spacer'}>&nbsp;</div>
         </div>);
 }

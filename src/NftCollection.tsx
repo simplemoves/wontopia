@@ -4,7 +4,7 @@ import { NftItems } from "./NftItems";
 import { Col, Row } from "antd";
 import { CCaption } from "./Typography";
 
-export function NftCollection({ walletAddressStr, cType, nfts }: { walletAddressStr: string, cType: CollectionType, nfts: Nft[] }) {
+export function NftCollection({ walletAddressStr, cType, nfts, wontonPower }: { walletAddressStr: string, cType: CollectionType, nfts: Nft[], wontonPower: number | undefined }) {
     const caption = useMemo(() => collectionTypeCaptions[cType], [cType]) 
     const sorted = useMemo(() => nfts.sort((nft1, nft2) => nft1.nft_index - nft2.nft_index), [nfts])
 
@@ -14,7 +14,7 @@ export function NftCollection({ walletAddressStr, cType, nfts }: { walletAddress
                 <Col><CCaption>{caption}</CCaption></Col>
             </Row>
 
-            <NftItems walletAddressStr={walletAddressStr} nfts={sorted}/>
+            <NftItems walletAddressStr={walletAddressStr} nfts={sorted} />
         </>     
     )
 }

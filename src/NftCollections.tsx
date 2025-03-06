@@ -1,26 +1,25 @@
 import { Address } from "@ton/core";
-import { testOnly, useNftsStore } from "./store/NftsStore";
 import { useMemo } from "react";
 import { Col, Divider, Row, Spin } from "antd";
 import { NftCollection } from "./NftCollection";
 import { CCaption } from "./Typography";
 import { ReloadOutlined } from "@ant-design/icons";
-import { useNftWatcher2 } from "./hooks/useNftWatcher2";
-import { BEUniverses } from "./lib/Types";
+import { useNftWatcher3 } from "./hooks/useNftWatcher3";
+import { BEUniverses, CollectionType, NftsHistory } from "./lib/Types";
+import { testOnly } from "./lib/Constants.ts";
 
 export function NftCollections({ walletAddress, universes }: { walletAddress: Address, universes: BEUniverses }) {
-    const nftStore = useNftsStore();
     const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
+    // const { handleUpdate, running } = useNftWatcher(walletAddress);
+    const { handleUpdate, running, nfts } = useNftWatcher3(walletAddress, universes);
+
     const filteredWinNfts = useMemo(() => {
-        return Object.values(nftStore.filteredNfts(walletAddressStr, 'WIN', universes.wonTonPower + 1));
-    }, [ nftStore, walletAddressStr, universes.wonTonPower ]);
+      return Object.values(filterNfts(nfts, 'WIN'));
+    }, [ nfts ]);
 
     const filteredLooseNfts = useMemo(() => {
-        return Object.values(nftStore.filteredNfts(walletAddressStr, 'LOOSE', universes.wonTonPower + 1));
-    }, [ nftStore, walletAddressStr, universes.wonTonPower ]);
-
-    // const { handleUpdate, running } = useNftWatcher(walletAddress);
-    const { handleUpdate, running } = useNftWatcher2(walletAddress, universes);
+      return Object.values(filterNfts(nfts, 'LOOSE'));
+    }, [ nfts ]);
 
     return (
         <>
@@ -31,9 +30,24 @@ export function NftCollections({ walletAddress, universes }: { walletAddress: Ad
                 </CCaption>
             </Divider>
             <Row style={{ width: '100%' }} wrap={false} justify="center">
-                <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts}/></Col>
-                <Col span={12}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts}/></Col>
+                <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts} wontonPower={universes.wonTonPower + 1} /></Col>
+                <Col span={12}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts} wontonPower={universes.wonTonPower + 1} /></Col>
             </Row>
         </>
     );
+}
+
+const filterNfts = (nfts: NftsHistory | undefined, cType: CollectionType): NftsHistory => {
+  const response: NftsHistory = {};
+  if (!nfts) {
+    return response;
+  }
+
+  for (const [key, nft] of Object.entries(nfts)) {
+    if (nft.collection_type === cType) {
+      response[key] = nft;
+    }
+  }
+
+  return response;
 }

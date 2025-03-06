@@ -8,7 +8,7 @@ export function BurnButton({ sendBurn, disabled }: { sendBurn: () => Promise<voi
             variant="solid"
             shape='round'
             onClick={sendBurn}
-            style={{ color: disabled ? '#868686' : '#E60000' }}>
+            style={{ color: disabled ? '#868686' : 'var(--primary-color)' }}>
             Burn NFT
         </Button>
     );

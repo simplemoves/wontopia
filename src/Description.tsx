@@ -1,23 +1,22 @@
 import { Button, Drawer } from 'antd';
 import { AccentB, TON } from './Typography';
-import { useNftsStore } from './store/NftsStore';
+import { useWontopiaStore } from './store/WontopiaStore.ts';
 import { useCallback, useEffect, useState } from 'react';
 // import { Lore } from './Lore';
 
 export const Description = ({isOpen, onClose }: {isOpen: boolean, onClose: () => void }) => {
-  const nftStore = useNftsStore();
-
-  const clearCache = useCallback(() => nftStore.clearStorage(), [nftStore]);
+  const wontopiaStore = useWontopiaStore();
+  const clearCache = useCallback(() => wontopiaStore.clearStorage(), [wontopiaStore]);
   const [storageIsEmpty, setStorageIsEmpty] = useState(true);
   useEffect(() => {
-    setStorageIsEmpty(nftStore.storageIsEmpty());
-  }, [nftStore])
+    setStorageIsEmpty(wontopiaStore.storageIsEmpty());
+  }, [wontopiaStore, setStorageIsEmpty])
   
-  // const storageIsEmpty = useCallback(() => nftStore.storageIsEmpty(), [nftStore]);
+  // const storageIsEmpty = useCallback(() => wontopiaStore.storageIsEmpty(), [wontopiaStore]);
   
   return (
     <Drawer
-      title=<><AccentB>Wontopia</AccentB> Description</>
+      title={<><AccentB>Wontopia</AccentB> Description</>}
       placement='right'
       size='large'
       onClose={onClose}

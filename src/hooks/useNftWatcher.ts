@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import { Address } from "@ton/core";
-import { useNftsStore } from "../store/NftsStore.ts";
+import { useWontopiaStore } from "../store/WontopiaStore.ts";
 import { getErrorMessage } from "../lib/ErrorHandler.ts";
 
 export function useNftWatcher(walletAddress: Address | undefined) {
-    const nftStore = useNftsStore();
+    const nftStore = useWontopiaStore();
     const [ running, setRunning ] = useState(false);
 
     const handleUpdate = useCallback(() => {

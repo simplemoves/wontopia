@@ -8,6 +8,37 @@ export const CollectionTypeSchema = z.union([
     z.literal(LOOSE),
 ]);
 
+export const UNKNOWN = "UNKNOWN";
+export const REQUESTED = "REQUESTED";
+export const REJECTED = "REJECTED";
+export const IN_PLAY = "IN_PLAY";
+export const OUT_PLAY = "OUT_PLAY";
+export const ERROR = "ERROR";
+export const TIMEOUT = "TIMEOUT";
+export const PlayStateSchema = z.union([
+  z.literal(UNKNOWN),
+  z.literal(REQUESTED),
+  z.literal(REJECTED),
+  z.literal(IN_PLAY),
+  z.literal(OUT_PLAY),
+  z.literal(WIN),
+  z.literal(LOOSE),
+  z.literal(ERROR),
+  z.literal(TIMEOUT)
+]);
+
+export const NOT_VALIDATED = "NOT_VALIDATED"
+export const NOT_INITED = "NOT_INITED"
+export const MINTED = "MINTED"
+export const BURNED = "BURNED"
+
+export const NftStatusSchema = z.union([
+  z.literal(NOT_VALIDATED),
+  z.literal(NOT_INITED),
+  z.literal(MINTED),
+  z.literal(BURNED)
+]);
+
 export const NFT = "NFT";
 export const NON_NFT = "NON_NFT";
 export const NON_MY_NFT = "NON_MY_NFT";
@@ -214,6 +245,64 @@ export const AddressInformationResponseSchema = z.object({
   status: SmartContractStatusSchema
 });
 
+export const PlayStateEventNftSchema = z.object({
+  address: z.string(),
+  index: z.number(),
+  ownerAddress: z.string(),
+  collectionType: CollectionTypeSchema,
+  power: z.number(),
+  metaUrl: z.string(),
+  status: NftStatusSchema,
+  mintedAt: z.preprocess(
+      (val) => (typeof val === "string" ? new Date(val) : val),
+      z.date(),
+  ),
+});
+
+export const PlayStateEventSchema = z.object({
+  id: z.string(),
+  state: PlayStateSchema,
+  playersToWait: z.number().optional(),
+  nft: PlayStateEventNftSchema,
+  stateChangedAt: z.date()
+});
+
+export const PlayStateEventsHolderSchema = z.object({
+  events: z.array(PlayStateEventSchema),
+  last_event: PlayStateEventSchema,
+  prev_event: PlayStateEventSchema.optional(),
+  started_at: z.date(),
+  players_to_wait: z.number().optional(),
+});
+
+export const PlayStateQueryResultSchema = z.object({
+  playState: PlayStateSchema,
+});
+
+export const PlayStateResultSchema = z.object({
+  playState: PlayStateEventSchema,
+});
+
+export const PlayStateSubscriptionResultSchema = z.object({
+  playState: PlayStateEventSchema
+});
+
+export const PlayStateVariablesSchema = z.object({
+  walletAddressStr: z.string(),
+  power: z.number(),
+});
+
+export const NftsVariablesSchema = z.object({
+  walletAddressStr: z.string(),
+  power: z.number(),
+  collectionTypes: CollectionTypeSchema.array().optional(),
+  statuses: NftStatusSchema.array().optional()
+});
+
+export const NftsResultSchema = z.object({
+  nfts: PlayStateEventNftSchema.array()
+});
+
 export const StoreRegistrySchema = z.record(z.string(), StoresSchema);
 export const GetStoreSchema = z.function().args(z.string()).returns(StoresSchema);
 export const GetTransactionsSchema = z.function().args(z.string()).returns(SimpleTransactionHistorySchema);
@@ -287,12 +376,44 @@ export type NftItemsResponse = z.infer<typeof NftItemsResponseSchema>;
 export type NftItemResponse = z.infer<typeof NftItemResponseSchema>;
 export type AddressInformationResponse = z.infer<typeof AddressInformationResponseSchema>;
 export type BEUniversesHolder = z.infer<typeof BEUniversesHolderSchema>;
+export type PlayStateEvent = z.infer<typeof PlayStateEventSchema>;
+export type PlayStateVariables = z.infer<typeof PlayStateVariablesSchema>;
+export type PlayStateSubscriptionResult = z.infer<typeof PlayStateSubscriptionResultSchema>;
+export type PlayStateEventsHolder = z.infer<typeof PlayStateEventsHolderSchema>;
+export type PlayStateEventNft = z.infer<typeof PlayStateEventNftSchema>;
+export type NftStatus = z.infer<typeof NftStatusSchema>;
+export type NftsVariables = z.infer<typeof NftsVariablesSchema>;
+export type NftsResult = z.infer<typeof NftsResultSchema>;
+export type PlayState = z.infer<typeof PlayStateSchema>;
+export type PlayStateQueryResult = z.infer<typeof PlayStateQueryResultSchema>;
+export type PlayStateResult = z.infer<typeof PlayStateResultSchema>;
 
 export const NOT_NFT: NonNft = { state: { type: 'NON_NFT', updated_at: new Date().getTime().toString() } };
 
 ////////////////////////////////
 // Function helpers
 ////////////////////////////////
+export const activePlayStates: Record<PlayState, boolean> = {
+  UNKNOWN: false,
+  REQUESTED: true,
+  REJECTED: false,
+  IN_PLAY: true,
+  OUT_PLAY: true,
+  WIN: false,
+  LOOSE: false,
+  ERROR: false,
+  TIMEOUT: false
+}
+
+export const playStateDescriptions = (ps: PlayState|undefined): string  => {
+  switch (ps) {
+    case undefined: return "Getting Play Status..."
+    case IN_PLAY: return "You Are In Play"
+    case OUT_PLAY: return "Your Game Played"
+    default: return "Game Finished"
+  }
+}
+
 export const isNft = (nft: Nft | NonNft): nft is Nft => {
   return !!nft && nft.state.type == NFT;
 }

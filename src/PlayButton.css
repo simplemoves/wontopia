@@ -3,4 +3,29 @@
   font-size: 4.5vw;
   font-weight: 600;
   line-height: 0.5;
+  width: 53.0vw;
+}
+
+.status {
+  align-content: center;
+  text-align: center;
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: var(--primary-color);
+  font-weight: 300;
+  letter-spacing: 2px;
+  height: 100%;
+  width: 53.0vw;
+}
+
+.subStatus {
+  padding-top: 1vw;
+  align-content: center;
+  text-align: center;
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 3vw;
+  color: var(--atention-color);
+  font-weight: 100;
+  letter-spacing: 2px;
+  height: 100%;
 }

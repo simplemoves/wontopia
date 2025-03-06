@@ -31,7 +31,8 @@ export function printJson<T>(obj: T) {
     return JSON.stringify(obj, (_, value) =>
         typeof value === 'bigint'
         ? value.toString()
-        : value // return everything else unchanged
+        : value, // return everything else unchanged
+        4
     );
 }
 

@@ -12,24 +12,24 @@ export const Game = ({ walletAddress }: { walletAddress: Address }) => {
   const [ universes, setUniverses ] = useState(globalUniversesHolder.universesHolder[0]);
 
   return (
-    <>
-      <Wontopia />    
-      <Row wrap={false} className='caption'>
-        <Col flex={'auto'} className='wallet-connected'>
-          Connected to the wallet
-        </Col>
-        <Col>
-          <Wallet walletAddress={walletAddress} />          
-        </Col>
-      </Row>  
+      <>
+        <Wontopia/>
+        <Row wrap={false} className='caption'>
+          <Col flex={'auto'} className='wallet-connected'>
+            Connected to the wallet
+          </Col>
+          <Col>
+            <Wallet walletAddress={walletAddress}/>
+          </Col>
+        </Row>
 
-      <Divider variant="dotted" style={{ borderColor: 'gray' }}>
-            <CCaption>Choose The Universe</CCaption>
-      </Divider>
+        <Divider variant="dotted" style={{ borderColor: 'gray' }}>
+          <CCaption>Choose The Universe</CCaption>
+        </Divider>
 
-      <Universes onUniversesChange={setUniverses}/>
+        <Universes walletAddress={walletAddress} onUniversesChange={setUniverses}/>
 
-      <NftCollections walletAddress={walletAddress} universes={universes} />
-    </>
+        <NftCollections walletAddress={walletAddress} universes={universes}/>
+      </>
   );
 }

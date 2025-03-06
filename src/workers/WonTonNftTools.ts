@@ -4,12 +4,13 @@ import { BEUniverses, CollectionInfo, collectionTypeCaptions, FeGetNftData, FOUN
 import { isTonAddress, possiblyNftTransfer } from "../lib/TonUtils";
 import axios from "axios";
 import { globalUniversesHolder } from "../store/GlobalUniversesHolder.ts";
-import { createNftIndex, testOnly } from "../store/NftsStore.ts";
+import { createNftIndex } from "../store/WontopiaStore.ts";
 import { getErrorMessage } from "../lib/ErrorHandler.ts";
 import { wonTonClientProvider } from "../providers/WonTonClientProvider.ts";
 import { tryNTimes } from "../lib/PromisUtils.ts";
 import { DescriptionsProps } from "antd";
 import { wonTonHttpClient } from "../providers/WontopiaTonClientProvider.ts";
+import { testOnly } from "../lib/Constants.ts";
 
 const client = wonTonHttpClient();
 
