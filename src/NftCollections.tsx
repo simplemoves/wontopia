@@ -4,14 +4,14 @@ import { Col, Divider, Row, Spin } from "antd";
 import { NftCollection } from "./NftCollection";
 import { CCaption } from "./Typography";
 import { ReloadOutlined } from "@ant-design/icons";
-import { useNftWatcher3 } from "./hooks/useNftWatcher3";
+import { useNftWatcher } from "./hooks/useNftWatcher.ts";
 import { BEUniverses, CollectionType, NftsHistory } from "./lib/Types";
 import { testOnly } from "./lib/Constants.ts";
 
 export function NftCollections({ walletAddress, universes }: { walletAddress: Address, universes: BEUniverses }) {
     const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
     // const { handleUpdate, running } = useNftWatcher(walletAddress);
-    const { handleUpdate, running, nfts } = useNftWatcher3(walletAddress, universes);
+    const { handleUpdate, running, nfts } = useNftWatcher(walletAddress, universes);
 
     const filteredWinNfts = useMemo(() => {
       return Object.values(filterNfts(nfts, 'WIN'));

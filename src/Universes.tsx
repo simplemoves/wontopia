@@ -3,7 +3,7 @@ import { Button, Col, Dropdown, MenuProps, Row, Space } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
 import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
-import { BEUniverses, playStateDescriptions } from "./lib/Types";
+import { BEUniverses } from "./lib/Types";
 import { UniversesDescription } from "./UniversesDescription";
 import { PlayButton } from "./PlayButton";
 import { Address } from "@ton/core";
@@ -12,6 +12,8 @@ export const Universes = ({ walletAddress, onUniversesChange }: { walletAddress:
   const [ wontonPower, setWontonPower ] = useState(0);
   const [ universes, setUniverses ] = useState(globalUniversesHolder.universesHolder[0]);
   const { sendBet, playState, paused } = useWontopiaPlay(universes, walletAddress);
+
+  console.log(`Universes component updated`);
 
   useEffect(() => {
     setUniverses(globalUniversesHolder.universesHolder[wontonPower]);
@@ -46,9 +48,8 @@ export const Universes = ({ walletAddress, onUniversesChange }: { walletAddress:
 
   const rottenPlay = useMemo(() => {
     if (paused) return false;
-    const now = Date.now();
-    const prev = playState?.started_at?.getTime();
-    return !!(prev && ((now - prev) > 1000 * 60));
+    const prev = playState?.last_event.stateChangedAt.getTime();
+    return !!(prev && ((Date.now() - prev) > 1000 * 25));
   }, [playState, paused])
 
   return (
@@ -76,6 +77,8 @@ export const Universes = ({ walletAddress, onUniversesChange }: { walletAddress:
         <Row wrap={false} className='universes-row'>
           <Col  flex={'auto'}>
             {wontonPower === 0 && rottenPlay ? (<div className="subStatus">It can take much longer than expected, as your <b>Game</b> depends on {playState?.players_to_wait} other player[s]...</div>) : null}
+            {playState?.last_event.state == "WIN" ? (<div className="winStatus">You Won last play. Congratulations!!!</div>) : null}
+            {playState?.last_event.state == "LOOSE" ? (<div className="looseStatus">You Loose last play. Cheer up!!!</div>) : null}
           </Col>
         </Row>
         <UniversesDescription isOpen={open} onClose={onClose}/>

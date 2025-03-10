@@ -8,38 +8,46 @@ import { activePlayStates, BEUniverses, PlayStateEventsHolder, UNKNOWN } from ".
 import { useSubscription } from "urql";
 import { playStateSubscriptionResultHandler, playStatusSubscriptionQuery } from "../lib/WontopiaGraphQL.ts";
 import { testOnly } from "../lib/Constants.ts";
+import { useWontopiaStore } from "../store/WontopiaStore.ts";
 
 export function useWontopiaPlay(universes: BEUniverses, walletAddress: Address) {
+  console.log(`useWontopiaPlay updated`);
+  const { startGame, stopGame, getGameState } = useWontopiaStore();
+  const { sender } = useTonConnect();
+  const walletAddressStr = useMemo(() => { return walletAddress.toString({ testOnly }) }, [walletAddress])
   const wContract = useMemo(() => { return WonTonContract.createFromAddress(universes.wonTon) }, [ universes.wonTon ]);
 
-  const { sender } = useTonConnect();
   const [ playState, setPlayState ] = useState<PlayStateEventsHolder|undefined>();
   const [ requested, setRequested ] = useState<boolean>(false);
   const [ paused, setPaused ] = useState<boolean>(false);
+  const [ startedAt, setStartedAt ] = useState(getGameState(walletAddressStr).startedAt ?? new Date())
+
+  console.log(`Started at stored: ${getGameState(walletAddressStr).startedAt}`);
+  console.log(`Started at stored type: ${typeof  getGameState(walletAddressStr).startedAt}`);
+  console.log(`Started at: ${startedAt}`);
+  // Run every time universes, walletAddress parameters change, to get the current play state of the wallet
+  useEffect(() => {
+    setPlayState(undefined);
+    setPaused(false);
+    setRequested(false);
+  }, [universes, walletAddress]);
 
   const handlePlayStateSubscriptionResult = useCallback(playStateSubscriptionResultHandler, []);
   const [{data}] = useSubscription({
     query: playStatusSubscriptionQuery,
     variables: {
-      walletAddressStr: walletAddress.toString({ testOnly: testOnly }),
+      walletAddressStr: walletAddressStr,
       power: universes.wonTonPower,
-      startedAt: Date.now(),
+      startedAt: startedAt.toISOString(),
     },
     pause: paused,
   }, handlePlayStateSubscriptionResult);
 
   useEffect(() => {
-    if (data?.last_event?.state) {
-      const newPlayState = data?.last_event?.state;
+    if (data) {
       setPlayState(data);
-      const needToPause = !activePlayStates[newPlayState];
-      setPaused(needToPause);
-
-      if (needToPause) {
-        setRequested(false);
-      }
     }
-  }, [data, setPaused, setRequested, setPlayState]);
+  }, [data, setPlayState]);
 
   useEffect(() => {
     if (playState?.last_event.state == UNKNOWN && !requested) {
@@ -47,18 +55,25 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddress: Address) 
       return;
     }
 
-  }, [playState, requested]);
+    if (!playState) {
+      return;
+    }
 
-  // Run every time universes, walletAddress parameters change, to get the current play state of the wallet
+    const needToPause = !activePlayStates[playState.last_event.state];
+    setPaused(needToPause);
+    if (needToPause) {
+      setRequested(false);
+    }
+  }, [playState, requested, setPaused, setRequested]);
+
   useEffect(() => {
-    setPlayState(undefined);
-    setPaused(false);
-    setRequested(false);
-  }, [ universes, walletAddress, setPlayState, setPaused, setRequested ]);
+    if (paused) {
+      stopGame(walletAddressStr)
+    }
+  }, [paused, walletAddressStr, stopGame]);
 
   const sendBet = useCallback(async () => {
     // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
-    setRequested(false);
     const client = await wonTonClientProvider.wonTonClient();
     const openedContract = client.open(wContract);
     const success = await tryNTimes(async () => {
@@ -68,11 +83,20 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddress: Address) 
     const isRequested = success ?? false;
     setRequested(isRequested);
     setPaused(!isRequested);
-  }, [ wContract, sender, setRequested, setPaused ]);
+    setPlayState(undefined);
+    if (isRequested) {
+      const { startedAt } = startGame(walletAddressStr);
+      setStartedAt(startedAt ?? new Date());
+    } else {
+      stopGame(walletAddressStr);
+      setStartedAt(new Date());
+    }
+  }, [ wContract, sender, walletAddressStr, setRequested, setPaused, startGame, stopGame, setStartedAt ]);
 
   return {
     sendBet,
     playState,
     paused,
+    startedAt
   };
 }

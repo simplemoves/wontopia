@@ -2,8 +2,32 @@
 import { cacheExchange, Client, fetchExchange, subscriptionExchange } from 'urql';
 import { createClient as createWSClient } from 'graphql-ws';
 
+let activeSocket: WebSocket | undefined;
+let timedOut: NodeJS.Timeout | undefined;
+
 const wsClient = createWSClient({
   url: 'wss://internal.wontopia.win:9443/query',
+  retryAttempts: Infinity,
+  shouldRetry: () => true,
+  keepAlive: 7500,
+  on: {
+    connected: (socket) => {
+      activeSocket = socket as WebSocket
+    },
+    ping: (received) => {
+      if (!received) {
+        timedOut = setTimeout(() => {
+          if (activeSocket?.readyState === WebSocket?.OPEN)
+            activeSocket?.close(4408, 'Request Timeout');
+        }, 7500);
+      }
+    },
+    pong: (received) => {
+      if (received) clearTimeout(timedOut);
+    },
+    opened: () => { console.log("Subscription connected") },
+    closed: (event) => { console.log("Subscription disconnected", event) }
+  }
 });
 
 export const graphQLClient = new Client({

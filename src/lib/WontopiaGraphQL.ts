@@ -1,6 +1,6 @@
 import { gql } from "urql";
 import { v4 as uuidv4 } from "uuid";
-import { PlayStateEventsHolder, PlayStateSubscriptionResult } from "./Types.ts";
+import { PlayStateEventSchema, PlayStateEventsHolder, PlayStateSubscriptionResult } from "./Types.ts";
 
 export const nftsQuery = gql`
     query(
@@ -52,11 +52,12 @@ export const playStatusSubscriptionQuery = gql`
     }`;
 
 export const playStateSubscriptionResultHandler = (eventsHolder: PlayStateEventsHolder | undefined, newResult: PlayStateSubscriptionResult): PlayStateEventsHolder => {
-  const event = { ...newResult.playState, id: uuidv4().toString() }
+  console.log(`new result: ${JSON.stringify(newResult)}`);
+  const newPlayState = PlayStateEventSchema.parse(newResult.playState)
+  const event = { ...newPlayState, id: uuidv4().toString() }
   return {
-    events: [...(eventsHolder?.events || []), event],
     last_event: event,
-    players_to_wait: newResult.playState.playersToWait,
+    players_to_wait: newResult.playState.playersToWait ?? 3,
     prev_event: eventsHolder?.last_event.state !== event.state ? eventsHolder?.last_event : eventsHolder?.prev_event,
     started_at: eventsHolder?.last_event ? eventsHolder.started_at : new Date(),
   }
