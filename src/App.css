@@ -100,7 +100,14 @@
   font-family: 'BebasNeue', Arial, serif;
   font-size: 6vw;
   color: gray;
-  font-weight: 600; 
+  font-weight: 600;
+}
+
+.collection-caption-inactive {
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 6vw;
+  color: #5a5a5a;
+  font-weight: 600;
 }
 
 /* In your CSS file or styled-components */
@@ -145,4 +152,38 @@
   color: var(--primary-color);
   font-weight: 600;
   letter-spacing: 1px;
+}
+
+.ant-tabs-ink-bar {
+  background-color: var(--primary-color) !important; /* your desired color */
+  height: 4px !important; /* thickness of bar */
+}
+
+.ant-tabs-nav::before {
+  border-bottom: none !important;
+}
+
+
+.container1 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: fit-content; /* match width of longest child (upper-row) */
+  text-align: left;
+  /*background-color: red;*/
+}
+
+.upper-row {
+  white-space: nowrap;
+  /*background-color: #0098EA22;*/
+}
+
+.down-row {
+  font-family: 'Oxygen', Arial, serif;
+  font-size: 2vw; /* small font */
+  white-space: nowrap;
+  width: 100%; /* always match upper row width */
+  overflow: hidden;
+  text-overflow: ellipsis; /* prevent wrapping, optional */
+  color: var(--secondary-color);
 }

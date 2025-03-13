@@ -1,10 +1,25 @@
 :root {
   --primary-color: #d63e0e;
   --secondary-color: gray;
-  --atention-color: #aea482;
+  --attention-color: #aea482;
   --win-color: #8cae82;
   --loose-color: #a882ae;
   /*--primary-color: #B40000;*/
   --dark: #1C1C1C;
   --light-shadow: #202020;
+  --bg: #000000;
+  --clr-1: #f65c2b;
+  --clr-2: #d63e0e;
+  --clr-3: #c53609;
+  --clr-4: #9c2e0a;
+
+  --status-unkown: gray;
+  --status-get: red;
+  --status-in-play: yellow;
+  --status-out-play: orange;
+  --status-finished: green;
+
+  --blur: 1rem;
+  --fs: clamp(3rem, 8vw, 7rem);
+  --ls: clamp(-1.75px, -0.25vw, -3.5px);
 }

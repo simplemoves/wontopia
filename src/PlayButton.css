@@ -6,11 +6,11 @@
   width: 53.0vw;
 }
 
-.status {
+.status-old {
   align-content: center;
   text-align: center;
   font-family: 'BebasNeue', Arial, serif;
-  font-size: 5vw;
+  font-size: 6vw;
   color: var(--primary-color);
   font-weight: 300;
   letter-spacing: 2px;
@@ -24,7 +24,7 @@
   text-align: center;
   font-family: 'Oxygen', Arial, serif;
   font-size: 3vw;
-  color: var(--atention-color);
+  color: var(--attention-color);
   font-weight: 100;
   letter-spacing: 0.2vw;
   height: 100%;
@@ -52,4 +52,119 @@
   font-weight: 200;
   letter-spacing: 2px;
   height: 100%;
+}
+
+.luminance {
+  align-content: center;
+  text-align: center;
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 6vw;
+  font-weight: 300;
+  letter-spacing: 2px;
+  height: 100%;
+  width: 53.0vw;
+  background: 50% 100% / 50% 50% no-repeat radial-gradient(ellipse at bottom, var(--primary-color), transparent, transparent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /*animation: reveal 3000ms ease-in-out forwards 200ms,*/
+  animation: glow 2500ms linear infinite 2000ms;
+}
+
+@keyframes glow {
+  40% {
+    text-shadow: 0 0 3px var(--primary-color);
+  }
+}
+
+
+
+
+.status-get,
+.status-unknown,
+.status-in-play,
+.status-out-play,
+.status-finished {
+  padding-top: 0.6vw;
+  align-content: center;
+  text-align: center;
+  font-family: 'BebasNeue', Arial, serif;
+  font-size: 5vw;
+  color: var(--primary-color);
+  font-weight: 300;
+  letter-spacing: 2px;
+  height: 100%;
+  width: 51.0vw;
+  background-color: black;
+  border-radius: 2vw;
+  position: relative;
+}
+
+@property --angle{
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+/*background-image: conic-gradient(from var(--angle), var(--clr-1), var(--clr-2), var(--clr-3), var(--clr-4), var(--clr-1));*/
+/* Общий стиль, вынесенный в один блок */
+.status-get::after,
+.status-get::before,
+.status-unknown::after,
+.status-unknown::before,
+.status-in-play::after,
+.status-in-play::before,
+.status-out-play::after,
+.status-out-play::before,
+.status-finished::after,
+.status-finished::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-image: conic-gradient(from var(--angle), transparent 50%, var(--bg-color));
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  padding: 0.2vw;
+  border-radius: 2vw;
+  animation: 3s spin linear infinite;
+}
+
+/* Общие свойства для псевдоэлементов before */
+.status-get::before,
+.status-unknown::before,
+.status-in-play::before,
+.status-out-play::before,
+.status-finished::before {
+  filter: blur(1vw);
+  opacity: 0.7;
+}
+
+/* Переопределение только цвета через переменные */
+.status-unknown {
+  --bg-color: var(--status-unkown);
+}
+
+.status-get {
+  --bg-color: var(--status-get);
+}
+
+.status-in-play {
+  --bg-color: var(--status-in-play);
+}
+
+.status-out-play {
+  --bg-color: var(--status-out-play);
+}
+
+.status-finished {
+  --bg-color: var(--status-finished);
+}
+
+/* Анимация остается общей */
+@keyframes spin {
+  from { --angle: 0deg; }
+  to   { --angle: 360deg; }
 }

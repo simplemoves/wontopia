@@ -10,9 +10,11 @@ export function NftAttributes ( { attributes }: {attributes: NftMetaAttributes[]
     <Descriptions
       bordered
       size='small'
-      title=<div className={'nft-description-title'}>NFT Attributes</div>
+      title={<div className={'nft-description-title'}>NFT Attributes</div>}
       items={items}
-      contentStyle={{color: 'silver'}}
-      labelStyle={{ color: 'white', fontFamily: 'BebasNeue, Arial, serif' }}/>
+      styles={{
+        label: { color: 'white', fontFamily: 'BebasNeue, Arial, serif' },
+        content: { color: 'silver' },
+    }}/>
   );
 }

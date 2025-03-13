@@ -1,16 +1,16 @@
-import { Button, Drawer } from 'antd';
+import {  Drawer } from 'antd';
 import { AccentB, TON } from './Typography';
-import { useWontopiaStore } from './store/WontopiaStore.ts';
-import { useCallback, useEffect, useState } from 'react';
+// import { useWontopiaStore } from './store/WontopiaStore.ts';
+// import { useCallback, useEffect, useState } from 'react';
 // import { Lore } from './Lore';
 
 export const Description = ({isOpen, onClose }: {isOpen: boolean, onClose: () => void }) => {
-  const wontopiaStore = useWontopiaStore();
-  const clearCache = useCallback(() => wontopiaStore.clearStorage(), [wontopiaStore]);
-  const [storageIsEmpty, setStorageIsEmpty] = useState(true);
-  useEffect(() => {
-    setStorageIsEmpty(wontopiaStore.storageIsEmpty());
-  }, [wontopiaStore, setStorageIsEmpty])
+  // const wontopiaStore = useWontopiaStore();
+  // const clearCache = useCallback(() => wontopiaStore.clearStorage(), [wontopiaStore]);
+  // const [storageIsEmpty, setStorageIsEmpty] = useState(true);
+  // useEffect(() => {
+  //   setStorageIsEmpty(wontopiaStore.storageIsEmpty());
+  // }, [wontopiaStore, setStorageIsEmpty])
   
   // const storageIsEmpty = useCallback(() => wontopiaStore.storageIsEmpty(), [wontopiaStore]);
   
@@ -50,23 +50,23 @@ export const Description = ({isOpen, onClose }: {isOpen: boolean, onClose: () =>
           Approximately 0.6 <TON/> coins from each initial stake will remain in the game. Part of this amount will be spent on network fees to run the smart contracts, and the remainder will support development and infrastructure.
       </em></p>
       {/* <Lore /> */}
-      <p>
-        <Button
-              disabled={storageIsEmpty}
-              size="small"
-              type="dashed"
-              // color="default"
-              // variant="solid"
-              shape='round'
-              onClick={clearCache}
-              // style={{ 
-              //     backgroundColor: '#1C1C1C',
-              //     borderColor: '#1C1C1C',
-              //     color: 'silver' }}>
-              >
-          Clear Cache 
-        </Button>
-      </p>
+      {/*<p>*/}
+      {/*  <Button*/}
+      {/*        disabled={storageIsEmpty}*/}
+      {/*        size="small"*/}
+      {/*        type="dashed"*/}
+      {/*        // color="default"*/}
+      {/*        // variant="solid"*/}
+      {/*        shape='round'*/}
+      {/*        onClick={clearCache}*/}
+      {/*        // style={{ */}
+      {/*        //     backgroundColor: '#1C1C1C',*/}
+      {/*        //     borderColor: '#1C1C1C',*/}
+      {/*        //     color: 'silver' }}>*/}
+      {/*        >*/}
+      {/*    Clear Cache */}
+      {/*  </Button>*/}
+      {/*</p>*/}
     </Drawer>
   );
 }

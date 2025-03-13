@@ -24,7 +24,7 @@ const data = globalUniversesHolder.universesPrizes;
 export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClose: () => void}) => {
   return (
     <Drawer
-      title=<><AccentB>Wontopia</AccentB> Universes Description</>
+      title={<><AccentB>Wontopia</AccentB> Universes Description</>}
       placement='right'
       size='large'
       onClose={onClose}
@@ -34,8 +34,8 @@ export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClos
         <Divider orientation="left" plain><b>Refresh Universe</b></Divider>
         <p>
           Clicking the "<ReloadOutlined />" button will initiate the process of finding all items related to <AccentB>Wontopia</AccentB>.
-          Please note that this may take some time for the very first click, as it involves reading all the related transactions from the <TON /> Blockchain.
-          Players must refresh the Universe after playing to view the results of the game.
+          Please note that finding all items related to <AccentB>Wontopia</AccentB> may take some time, as it involves requesting them from the external indexer of <TON /> Blockchain.
+          Universe will refresh automatically after playing, so the Player could view the results of the game.
         </p>
         <Divider orientation="left" plain><b>Dropdown Universes</b></Divider>
         <p>
@@ -54,7 +54,7 @@ export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClos
           pagination={false} />
         <p>
           <b>Universe 0</b> - is a starting level of the game. Players pays 1 <TON/> to enters.
-          If a player wins, he receives an NFT Item with its balance equals to the prize value, and gains access to play in Universe 1, using the NFT he ereceived in the Universe 0.          
+          If a player wins, he receives an NFT Item with its balance equals to the prize value, and gains access to play in Universe 1, using the NFT he received in the Universe 0.
         </p>
         <p>
           Each winning NFT allows the player to advance to the next Universe, where they can play with other players who have also reached that level. It's the chance to upgrade the NFT and triple its value.

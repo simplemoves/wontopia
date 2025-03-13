@@ -169,6 +169,7 @@ export const TonClientParametersSchema = z.object({
 export const TonClientParametersOptSchema = TonClientParametersSchema.partial();
 
 export const NftsHistorySchema = z.record(z.string(), NftSchema);
+export const NftsPowerSchema = z.record(z.string(), NftsHistorySchema);
 
 export const SimpleTransactionHistoryItemSchema = z.object({
   hash: z.string(),
@@ -259,20 +260,35 @@ export const NftsResultSchema = z.object({
   nfts: PlayStateEventNftSchema.array()
 });
 
-export const StoreRegistrySchema = z.record(z.string(), StoresSchema);
-export const GetStoreSchema = z.function().args(z.string()).returns(StoresSchema);
+export const StatesRegistrySchema = z.record(z.number(), StoresSchema);
+export const BurnedNftsSchema = z.record(z.string(), z.boolean());
+export const GetGameStateStorageFunctionSchema = z.function().args(z.number()).returns(StoresSchema);
 export const ClearStorageFunctionSchema = z.function().args().returns(z.void());
 export const StorageIsEmptyFunctionSchema = z.function().args().returns(z.boolean());
-export const GetGameStateFunctionSchema = z.function().args(z.string()).returns(GameStateSchema);
-export const StartGameFunctionSchema = z.function().args(z.string()).returns(GameStateSchema);
-export const StopGameFunctionSchema = z.function().args(z.string()).returns(GameStateSchema);
+export const GetGameStateFunctionSchema = z.function().args(z.number()).returns(GameStateSchema);
+export const StartGameFunctionSchema = z.function().args(z.number()).returns(GameStateSchema);
+export const StopGameFunctionSchema = z.function().args(z.number()).returns(GameStateSchema);
+export const MarkNftAsBurnedFunctionSchema = z.function().args(NftSchema).returns(z.void());
+export const SetRunningFunctionSchema = z.function().args(z.boolean()).returns(z.void());
+export const IsRunningFunctionSchema = z.function().args().returns(z.boolean());
+export const AddNftFunctionSchema = z.function().args(z.number(), NftSchema).returns(z.void());
+export const GetNftsFunctionSchema = z.function().args(z.number()).returns(NftSchema.array());
 
 export const NftStoreSchema = z.object({
-  storesRegistry: StoreRegistrySchema,
-  store: GetStoreSchema,
+  walletAddress: z.custom<Address>(),
+  statesRegistry: StatesRegistrySchema,
+  burnedNfts: BurnedNftsSchema,
+  nfts: NftsPowerSchema,
+  running: z.boolean(),
+  getGameStateStorage: GetGameStateStorageFunctionSchema,
   startGame: StartGameFunctionSchema,
   stopGame: StopGameFunctionSchema,
   getGameState: GetGameStateFunctionSchema,
+  markNftAsBurned: MarkNftAsBurnedFunctionSchema,
+  getNfts: GetNftsFunctionSchema,
+  addNft: AddNftFunctionSchema,
+  setRunning: SetRunningFunctionSchema,
+  isRunning: IsRunningFunctionSchema,
   clearStorage: ClearStorageFunctionSchema,
   storageIsEmpty: StorageIsEmptyFunctionSchema
 });
@@ -324,13 +340,13 @@ export const activePlayStates: Record<PlayState, boolean> = {
   TIMEOUT: false
 }
 
-export const playStateDescriptions = (ps: PlayState|undefined): string  => {
+export const playStateDescriptions = (ps: PlayState|undefined): [string, string]  => {
   switch (ps) {
-    case undefined: return "Getting Game Status..."
-    case UNKNOWN: return "Getting Game Status..."
-    case IN_PLAY: return "You Are In Game"
-    case OUT_PLAY: return "Your Game Played"
-    default: return "Game Finished"
+    case undefined: return ["Getting Game Status...", "status-get"]
+    case UNKNOWN: return ["Getting Game Status...", "status-unknown"]
+    case IN_PLAY: return ["You Are In Game", "status-in-play"]
+    case OUT_PLAY: return ["Your Game Played", "status-out-play"]
+    default: return ["Game Finished", "status-finished"]
   }
 }
 
@@ -366,3 +382,5 @@ export const mapResponseToNft = (nftItem: NftItemResponse, cType: CollectionType
       created_at: new Date().getTime().toString()
   };
 }
+
+export const createNftIndex = (cType: CollectionType, wontonPower: number, nftIndex: number) => `${cType}:${wontonPower}:${nftIndex}`;

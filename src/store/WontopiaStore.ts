@@ -1,62 +1,74 @@
-import { create } from 'zustand';
+import { create, StoreApi, UseBoundStore } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { CollectionType, GameState, Nft, NftStore, StoreRegistrySchema, Stores, StoresSchema } from "../lib/Types";
+import { GameState, Nft, NftStore, StoresSchema } from "../lib/Types";
+import { Address } from "@ton/core";
 
-const emptyStores= {
+const emptyStore= {
     gameState: {
       active: false,
     },
 };
 
-export const useWontopiaStore = create<NftStore>()(
+const stores: Record<string, UseBoundStore<StoreApi<NftStore>>> = {}
+
+export const useWontopiaStore = (walletAddressStr: string) => {
+  let store = stores[walletAddressStr];
+  if (!store) {
+    store = createWontopiaStore(walletAddressStr);
+    stores[walletAddressStr] = store;
+  }
+
+  return store;
+}
+
+const createWontopiaStore = (walletAddressStr: string) => create<NftStore>()(
     devtools(
         persist(
             (set, get) => ({
-                storesRegistry: {},
-                store: (walletAddressStr) => {
-                    const currentStoresRegistry = { ...get().storesRegistry };
-                    let stores: Stores = currentStoresRegistry[walletAddressStr];
-                    if (!stores) {
-                        stores = emptyStores
-                        set({ storesRegistry: { ...currentStoresRegistry,  [walletAddressStr]: stores }});
-                    }
+                walletAddress: Address.parse(walletAddressStr),
+                statesRegistry: {},
+                burnedNfts: {},
+                nfts: {},
+                running: false,
 
-                    return StoresSchema.parse(stores)
+                getGameStateStorage: (wontonPower) => {
+                  return StoresSchema.parse(get().statesRegistry[wontonPower] || emptyStore);
                 },
-                startGame: (walletAddressStr): GameState => {
-                  const store = get().store(walletAddressStr);
+                startGame: (wontonPower): GameState => {
+                  const store = get().getGameStateStorage(wontonPower);
                   const gameState = { ...store.gameState, active: true, startedAt: new Date() }
-                  set({ storesRegistry: { ...get().storesRegistry, [walletAddressStr]: { gameState: gameState } }})
+                  set((state) => ({ statesRegistry: { ...state.statesRegistry, [wontonPower]: { gameState: gameState } }}));
                   return gameState;
                 },
-                stopGame: (walletAddressStr): GameState => {
-                  const store = get().store(walletAddressStr);
+                stopGame: (wontonPower): GameState => {
+                  const store = get().getGameStateStorage(wontonPower);
                   const gameState = { ...store.gameState, active: false, startedAt: undefined }
-                  set({ storesRegistry: { ...get().storesRegistry, [walletAddressStr]: { gameState: gameState } }})
+                  set((state) => ({ statesRegistry: { ...state.statesRegistry, [wontonPower]: { gameState: gameState } }}))
                   return gameState;
                 },
-                getGameState: (walletAddressStr): GameState => {
-                  return get().store(walletAddressStr).gameState;
+                getGameState: (wontonPower): GameState => {
+                  return get().getGameStateStorage(wontonPower).gameState;
                 },
-                clearStorage: () => { set({ storesRegistry: { } }) },
-                storageIsEmpty: () => !(Object.keys(get().storesRegistry).length > 0)
+                markNftAsBurned: (nft: Nft) => {
+                  set((state) => ({ burnedNfts: { ...state.burnedNfts, [nft.nft_address]: true }}));
+                },
+                addNft: (wontonPower, newNft: Nft) => {
+                  const powerHistory = get().nfts[wontonPower] ?? {};
+                  powerHistory[newNft.nft_address] = newNft;
+                  set({ nfts: { ... get().nfts, [wontonPower]: powerHistory }});
+                },
+                getNfts: (wontonPower): Nft[] => Object.values(get().nfts[wontonPower] ?? {}),
+                setRunning: (running: boolean) => set({ running }),
+                isRunning: () => get().running,
+                clearStorage: () => { set({ statesRegistry: {}, burnedNfts: {}, nfts: {}, running: false }) },
+                storageIsEmpty: () => Object.keys(get().statesRegistry).length === 0
+                                      && Object.keys(get().burnedNfts).length === 0
+                                      && Object.keys(get().nfts).length === 0
             }),
             {
-                name: `nfts-storage`,
-                migrate: (persistedState, version) => {
-                  if (!persistedState) return { storesRegistry: {} };
-                  try {
-                    return StoreRegistrySchema.parse(persistedState);
-                  } catch (error) {
-                    console.error('⚠️ Persisted state invalid:', error);
-                    return { storesRegistry: {} }; // Fallback to safe state
-                  }
-                },
+                name: walletAddressStr,
             },
         ),
     ),
 );
 
-export const createNftIndex = (cType: CollectionType, wontonPower: number, nftIndex: number) => `${cType}:${wontonPower}:${nftIndex}`;
-export const createNftIndexFrom = (nft?: Nft) => `${nft?.collection_type}:${nft?.wonton_power}:${nft?.nft_index}`;
-export const equalNfts = (nft1?: Nft, nft2?: Nft) => createNftIndexFrom(nft1) === createNftIndexFrom(nft2);

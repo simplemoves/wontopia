@@ -1,51 +1,76 @@
-import { Address } from "@ton/core";
-import { useMemo } from "react";
-import { Col, Divider, Row, Spin } from "antd";
+import { useCallback, useMemo, useState } from "react";
+import { Col, Divider, Row, Spin, Tabs, TabsProps } from "antd";
 import { NftCollection } from "./NftCollection";
 import { CCaption } from "./Typography";
 import { ReloadOutlined } from "@ant-design/icons";
 import { useNftWatcher } from "./hooks/useNftWatcher.ts";
-import { BEUniverses, CollectionType, NftsHistory } from "./lib/Types";
-import { testOnly } from "./lib/Constants.ts";
+import { BEUniverses, CollectionType, collectionTypeCaptions, Nft } from "./lib/Types";
 
-export function NftCollections({ walletAddress, universes }: { walletAddress: Address, universes: BEUniverses }) {
-    const walletAddressStr = useMemo(() => walletAddress.toString({ testOnly }), [ walletAddress ])
-    // const { handleUpdate, running } = useNftWatcher(walletAddress);
-    const { handleUpdate, running, nfts } = useNftWatcher(walletAddress, universes);
+export function NftCollections({ walletAddressStr, universes }: { walletAddressStr: string, universes: BEUniverses }) {
+  const { handleUpdate, isRunning, nfts } = useNftWatcher(walletAddressStr, universes);
+  const [ activeKey, setActiveKey ] = useState("1");
+  const onTabChange = useCallback((activeKey: string) => { setActiveKey(activeKey) }, [setActiveKey]);
+  const getCaption = useCallback((forKey: string, cType: CollectionType) => {
+    const captionText = collectionTypeCaptions[cType];
+    const className = activeKey === forKey ? "collection-caption" : "collection-caption-inactive";
+    return <span className={className}>{captionText}</span>
+  }, [ activeKey ])
 
-    const filteredWinNfts = useMemo(() => {
+  const filteredWinNfts = useMemo(() => {
       return Object.values(filterNfts(nfts, 'WIN'));
-    }, [ nfts ]);
+    }, [ nfts, walletAddressStr, universes ]);
 
     const filteredLooseNfts = useMemo(() => {
       return Object.values(filterNfts(nfts, 'LOOSE'));
-    }, [ nfts ]);
+    }, [ nfts, walletAddressStr, universes ]);
+
+    const items: TabsProps['items'] = [
+      {
+        key: '1',
+        label: getCaption('1', 'WIN'),
+        children: (
+            <Row style={{ width: '100%' }} wrap={false} justify="center">
+              <Col style={{ minWidth: '100%' }}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts} wontonPower={universes.wonTonPower + 1} /></Col>
+            </Row>
+        ),
+      },
+      {
+        key: '2',
+        label: getCaption('2', 'LOOSE'),
+        children: (
+            <Row style={{ width: '100%' }} wrap={false} justify="center">
+              <Col style={{ minWidth: '100%' }}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts} wontonPower={universes.wonTonPower + 1} /></Col>
+            </Row>
+        ),
+      },
+    ];
 
     return (
         <>
             <Divider variant="dotted" style={{ borderColor: 'gray' }}>
-                <CCaption>Received NFTs&nbsp;&nbsp;{running ?
-                    <Spin indicator={<ReloadOutlined spin />} style={{ color: 'gray' }} size="large" /> :
-                    <ReloadOutlined style={{ color: 'gray' }} onClick={handleUpdate} />}
+                <CCaption>Your NFT Collections&nbsp;&nbsp;{isRunning() ?
+                    <Spin indicator={<ReloadOutlined spin style={{ color: 'gray', fontSize: '5vw' }} />} style={{ width: '5vw', height: '5vw' }} /> :
+                    <ReloadOutlined style={{ color: 'gray', width: '5vw', height: '5vw' }} onClick={handleUpdate} />}
                 </CCaption>
             </Divider>
-            <Row style={{ width: '100%' }} wrap={false} justify="center">
-                <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts} wontonPower={universes.wonTonPower + 1} /></Col>
-                <Col span={12}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts} wontonPower={universes.wonTonPower + 1} /></Col>
-            </Row>
+            <Tabs defaultActiveKey="1" items={items} centered onChange={onTabChange} />
+            {/*<Row style={{ width: '100%' }} wrap={false} justify="center">*/}
+            {/*    <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts} wontonPower={universes.wonTonPower + 1} /></Col>*/}
+            {/*    <Col span={12}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts} wontonPower={universes.wonTonPower + 1} /></Col>*/}
+            {/*</Row>*/}
         </>
     );
 }
 
-const filterNfts = (nfts: NftsHistory | undefined, cType: CollectionType): NftsHistory => {
-  const response: NftsHistory = {};
+const filterNfts = (nfts: Nft[] | undefined, cType: CollectionType): Nft[] => {
+  const response: Nft[] = [];
   if (!nfts) {
     return response;
   }
 
-  for (const [key, nft] of Object.entries(nfts)) {
+  for (const nft of nfts) {
     if (nft.collection_type === cType) {
-      response[key] = nft;
+      response.push(nft);
     }
   }
 

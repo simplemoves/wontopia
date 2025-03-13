@@ -10,7 +10,7 @@ import { playStateSubscriptionResultHandler, playStatusSubscriptionQuery } from 
 import { useWontopiaStore } from "../store/WontopiaStore.ts";
 import { useNftWatcher } from "./useNftWatcher.ts";
 
-export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string) {
+export function useWontopiaNftPlay(universes: BEUniverses, walletAddressStr: string) {
   const { startGame, stopGame, getGameState } = useWontopiaStore(walletAddressStr)();
   const { handleUpdate, isRunning } = useNftWatcher(walletAddressStr, universes);
   const { sender } = useTonConnect();
@@ -97,9 +97,9 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string
   }, [ wContract, sender, universes.wonTonPower, setRequested, setPaused, startGame, stopGame, setStartedAt ]);
 
   return {
-    sendBet,
-    playState,
-    paused,
-    startedAt
+    sendNftBet: sendBet,
+    nftPlayState: playState,
+    nftPlayPaused: paused,
+    nftPlayStartedAt: startedAt
   };
 }

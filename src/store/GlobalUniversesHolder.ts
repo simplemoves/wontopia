@@ -1,5 +1,5 @@
 import { address, fromNano } from "@ton/core";
-import { log } from "console";
+import { debug } from "console";
 import { FEUniversesHolder } from "../lib/Types";
 
 const wontonPrizeFraction = BigInt(import.meta.env.VITE_WONTON_PRIZE_FRACTION_TON!);
@@ -12,10 +12,10 @@ const initUniverses = () => {
         const lCollection = address(import.meta.env[`VITE_LOOSE_NFT_COLLECTION_ADDRESS_${wonTonPower}`]);
 
         if (wonTon && wCollection && lCollection) {
-            log(`wontonPower: ${wonTonPower} | universe loaded`);
-            log(`wontonPower: ${wonTonPower} | WonTon: ${wonTon.toString({ testOnly: true })}`);
-            log(`wontonPower: ${wonTonPower} | wCollection: ${wCollection.toString({ testOnly: true })}`);
-            log(`wontonPower: ${wonTonPower} | lCollection: ${lCollection.toString({ testOnly: true })}`);
+            debug(`wontonPower: ${wonTonPower} | universe loaded`);
+            debug(`wontonPower: ${wonTonPower} | WonTon: ${wonTon.toString({ testOnly: true })}`);
+            debug(`wontonPower: ${wonTonPower} | wCollection: ${wCollection.toString({ testOnly: true })}`);
+            debug(`wontonPower: ${wonTonPower} | lCollection: ${lCollection.toString({ testOnly: true })}`);
             universesHolder.collections[wCollection.toRawString()] = { cType: 'WIN', wonTonPower: wonTonPower + 1 };
             universesHolder.collections[lCollection.toRawString()] = { cType: 'LOOSE', wonTonPower: wonTonPower + 1 };
             universesHolder.universesHolder[wonTonPower] = {
