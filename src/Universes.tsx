@@ -2,17 +2,18 @@ import { DownOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Dropdown, MenuProps, Row, Space } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
-import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 import { BEUniverses } from "./lib/Types";
 import { UniversesDescription } from "./UniversesDescription";
 import { PlayButton } from "./PlayButton";
-import { useWontopiaNftPlay } from "./hooks/useWontopiaNftPlay.ts";
+import { PlayNft } from "./PlayNft";
+import { useGameStore } from "./store/GameStore.ts";
+import { printJson } from "./lib/ErrorHandler.ts";
 
 export const Universes = ({ walletAddressStr, onUniversesChange }: { walletAddressStr: string, onUniversesChange: (universes: BEUniverses) => void }) => {
   const [ wontonPower, setWontonPower ] = useState(0);
   const [ universes, setUniverses ] = useState(globalUniversesHolder.universesHolder[0]);
-  const { sendBet, playState, paused } = useWontopiaPlay(universes, walletAddressStr);
-  const { sendNftBet, nftPlayState, nftPlayPaused } = useWontopiaNftPlay(universes, walletAddressStr);
+  const game = useGameStore(walletAddressStr, universes.wonTonPower)(state => state.game);
+  console.log(`Game: ${printJson(game)}`);
 
   useEffect(() => {
     setUniverses(globalUniversesHolder.universesHolder[wontonPower]);
@@ -45,23 +46,11 @@ export const Universes = ({ walletAddressStr, onUniversesChange }: { walletAddre
     setOpen(true);
   }, [setOpen]);
 
-  const rottenPlay = useMemo(() => {
-    if (paused) return false;
-    const prev = playState?.last_event.stateChangedAt.getTime();
-    return !!(prev && ((Date.now() - prev) > 1000 * 25));
-  }, [playState, paused, wontonPower])
-
-  const rottenNftPlay = useMemo(() => {
-    if (nftPlayPaused) return false;
-    const prev = nftPlayState?.last_event.stateChangedAt.getTime();
-    return !!(prev && ((Date.now() - prev) > 1000 * 25));
-  }, [nftPlayState, nftPlayPaused])
-
   return (
       <>
         <Row wrap={false} className='universes-row'>
           <Col>
-            <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} overlayClassName="custom-dropdown" overlayStyle={{height: "200px"}}>
+            <Dropdown menu={{ items, selectable: true, defaultSelectedKeys: [ '0' ], onClick }} overlayClassName="custom-dropdown">
               <Button color="default" variant="solid">
                 <Space>
                   <div className="universe-dropdown" style={{ paddingTop: '3px' }}>Universe {universes.wonTonPower}</div>
@@ -77,20 +66,16 @@ export const Universes = ({ walletAddressStr, onUniversesChange }: { walletAddre
           <Col flex={'auto'}>&nbsp;</Col>
           <Col>
             {wontonPower === 0 ?
-                (<PlayButton isInPlay={!paused} sendBet={sendBet} playState={playState}/>) :
-                (<div className="subStatus">Is in play: {!paused ? 'Yes' : 'No'}</div>)
-                  // (<PlayNftButton  />)
+                (<PlayButton universes={universes} walletAddressStr={walletAddressStr} />) :
+                (<PlayNft universes={universes} walletAddressStr={walletAddressStr} />)
             }
           </Col>
         </Row>
         <Row wrap={false} className='universes-row'>
           <Col  flex={'auto'}>
-            {wontonPower === 0 && rottenPlay ? (<div className="subStatus">It can take much longer than expected, as your <b>Game</b> depends on {playState?.players_to_wait} other player[s]...</div>) : null}
-            {wontonPower !== 0 && rottenNftPlay ? (<div className="subStatus">It can take much longer than expected, as your <b>Game</b> depends on {nftPlayState?.players_to_wait} other player[s]...</div>) : null}
-            {playState?.last_event.state == "WIN" ? (<div className="winStatus">You Won last play. Congratulations!!!</div>) : null}
-            {playState?.last_event.state == "LOOSE" ? (<div className="looseStatus">You Loose last play. Cheer up!!!</div>) : null}
-            {nftPlayState?.last_event.state == "WIN" ? (<div className="winStatus">You Won last play. Congratulations!!!</div>) : null}
-            {nftPlayState?.last_event.state == "LOOSE" ? (<div className="looseStatus">You Loose last play. Cheer up!!!</div>) : null}
+            {game?.isDelayed ? (<div className="sub-status-generic">It can take much longer than expected, as your <b>Game</b> depends on {game.playersToWait} other player[s]...</div>) : null}
+            {game?.state == "WIN" ? (<div className="sub-status-win">You Won last play. Congratulations!!!</div>) : null}
+            {game?.state == "LOOSE" ? (<div className="sub-status-loose">You Loose last play. Cheer up!!!</div>) : null}
           </Col>
         </Row>
         <UniversesDescription isOpen={open} onClose={onClose}/>

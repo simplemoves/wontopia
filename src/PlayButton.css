@@ -6,20 +6,10 @@
   width: 53.0vw;
 }
 
-.status-old {
-  align-content: center;
-  text-align: center;
-  font-family: 'BebasNeue', Arial, serif;
-  font-size: 6vw;
-  color: var(--primary-color);
-  font-weight: 300;
-  letter-spacing: 2px;
-  height: 100%;
-  width: 53.0vw;
-}
-
-.subStatus {
-  padding-top: 1vw;
+.sub-status,
+.sub-status-generic,
+.sub-status-win,
+.sub-status-loose {
   align-content: center;
   text-align: center;
   font-family: 'Oxygen', Arial, serif;
@@ -30,28 +20,24 @@
   height: 100%;
 }
 
-.winStatus {
+.sub-status-generic {
   padding-top: 1vw;
-  align-content: center;
-  text-align: center;
-  font-family: 'BebasNeue', Arial, serif;
+}
+
+.sub-status-win {
+  padding-top: 1vw;
   font-size: 4vw;
   color: var(--win-color);
   font-weight: 200;
   letter-spacing: 2px;
-  height: 100%;
 }
 
-.looseStatus {
+.sub-status-loose {
   padding-top: 1vw;
-  align-content: center;
-  text-align: center;
-  font-family: 'BebasNeue', Arial, serif;
   font-size: 4vw;
   color: var(--loose-color);
   font-weight: 200;
   letter-spacing: 2px;
-  height: 100%;
 }
 
 .luminance {
@@ -77,17 +63,14 @@
   }
 }
 
-
-
-
 .status-get,
 .status-unknown,
 .status-in-play,
 .status-out-play,
 .status-finished {
-  padding-top: 0.6vw;
-  align-content: center;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: 'BebasNeue', Arial, serif;
   font-size: 5vw;
   color: var(--primary-color);

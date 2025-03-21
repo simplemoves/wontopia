@@ -15,9 +15,9 @@ export function useNftWatcher(walletAddressStr: string, universes: BEUniverses) 
 
     const handleUpdate = useCallback(() => {
         const requestNfts = async () => {
-            setRunning(true);
+            setRunning(universes.wonTonPower, true);
             try {
-                console.debug(`${new Date().getTime()} | Requesting nfts... ${isRunning()}`);
+                console.debug(`${new Date().getTime()} | Requesting nfts... ${isRunning(universes.wonTonPower)}`);
                 const result = await graphQlClient.query<NftsResult, NftsVariables>(
                     nftsQuery,
                     {
@@ -54,10 +54,10 @@ export function useNftWatcher(walletAddressStr: string, universes: BEUniverses) 
             } catch (error) {
                 console.error(`${new Date().getTime()} | Requesting nfts failed with error: ${getErrorMessage(error)}`);
             }
-            setRunning(false);
+            setRunning(universes.wonTonPower, false);
         }
 
-        if (isRunning()) {
+        if (isRunning(universes.wonTonPower)) {
             console.debug(`${new Date().getTime()} | Requesting nfts is in progress...`);
             return;
         }

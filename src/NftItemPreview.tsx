@@ -19,7 +19,7 @@ export function NftItemPreview({ nft, setPreviewVisible, walletAddressStr }: {
         setPreviewVisible(false);
         const sent = await sendBurn();
         if (sent) {
-          markNftBurned(nft.nft_address);
+          markNftBurned(nft);
         }
     }, [sendBurn, markNftBurned, nft])
 

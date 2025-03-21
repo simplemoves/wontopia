@@ -2,7 +2,7 @@ import { getErrorMessage } from "../lib/ErrorHandler";
 import { RateLimiter, tryNTimes } from "../lib/PromisUtils";
 import { requesAddressInformation, requestNftItems } from "../lib/ToncenterApi";
 import { CollectionType, mapResponseToNft, Nft, NftMeta } from "../lib/Types";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const rateLimiterObj = new RateLimiter(2000);
 
@@ -47,9 +47,29 @@ const readNfts = async (cType: CollectionType,
     return await innerRead();
 }
 
+async function getWithRetry<T>(url: string, retries: number = 12, delay: number = 10000): Promise<AxiosResponse<T>> {
+    for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+            return await axios.get<T>(url);
+        } catch (error: unknown) {
+            // Narrow error using axios.isAxiosError
+            if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
+                console.warn(`Attempt ${attempt + 1} failed with 404. Retrying in ${delay}ms...`);
+                if (attempt < retries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            } else {
+                // Rethrow if the error is not an Axios error with a 404
+                throw error;
+            }
+        }
+    }
+    throw new Error(`Failed to fetch ${url} after ${retries} attempts due to 404 error.`);
+}
+
 export const fetchMeta = async (uri: string): Promise<NftMeta | undefined> => {
     try {
-        const response = await axios.get<NftMeta>(uri);
+        const response = await getWithRetry<NftMeta>(uri);
         return response.data;
     } catch (error) {
         const msg = getErrorMessage(error);

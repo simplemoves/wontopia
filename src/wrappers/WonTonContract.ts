@@ -16,17 +16,16 @@ export class WonTonContract implements Contract {
             value: bigint
             queryId?: number
             provided_wonton_power: number,
-        }
+        },
     ) => {
         try {
             await provider.internal(via, {
                 value: opts.value,
                 sendMode: SendMode.PAY_GAS_SEPARATELY,
-                body: beginCell()
-                .storeUint(Opcodes.bet, 32)
-                .storeUint(opts.queryId ?? 0, 64)
-                .storeUint(opts.provided_wonton_power, 8)
-                .endCell(),
+                body: beginCell().storeUint(Opcodes.bet, 32)
+                                 .storeUint(opts.queryId ?? 0, 64)
+                                 .storeUint(opts.provided_wonton_power, 8)
+                                 .endCell(),
             })
             return true
         } catch (ex) {
@@ -43,18 +42,17 @@ export class WonTonContract implements Contract {
             queryId?: number
             provided_wonton_power: number,
             referee_address: Address
-        }
+        },
     ) => {
         try {
             await provider.internal(via, {
                 value: opts.value,
                 sendMode: SendMode.PAY_GAS_SEPARATELY,
-                body: beginCell()
-                .storeUint(Opcodes.bet_referred, 32)
-                .storeUint(opts.queryId ?? 0, 64)
-                .storeUint(opts.provided_wonton_power, 8)
-                .storeAddress(opts.referee_address)
-                .endCell(),
+                body: beginCell().storeUint(Opcodes.bet_referred, 32)
+                                 .storeUint(opts.queryId ?? 0, 64)
+                                 .storeUint(opts.provided_wonton_power, 8)
+                                 .storeAddress(opts.referee_address)
+                                 .endCell(),
             })
         } catch (ex) {
             console.error(getErrorMessage(ex));

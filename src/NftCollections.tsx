@@ -48,11 +48,14 @@ export function NftCollections({ walletAddressStr, universes }: { walletAddressS
     return (
         <>
             <Divider variant="dotted" style={{ borderColor: 'gray' }}>
-                <CCaption>Your NFT Collections&nbsp;&nbsp;{isRunning() ?
+                <CCaption>Your NFT Collections&nbsp;&nbsp;{isRunning(universes.wonTonPower) ?
                     <Spin indicator={<ReloadOutlined spin style={{ color: 'gray', fontSize: '5vw' }} />} style={{ width: '5vw', height: '5vw' }} /> :
                     <ReloadOutlined style={{ color: 'gray', width: '5vw', height: '5vw' }} onClick={handleUpdate} />}
                 </CCaption>
             </Divider>
+            { filteredWinNfts.length > 0 && activeKey === '1' ? (
+                <div className="sub-status">You can play this NFT(s) in the next universe #{universes.wonTonPower + 1}</div>
+            ): null }
             <Tabs defaultActiveKey="1" items={items} centered onChange={onTabChange} />
             {/*<Row style={{ width: '100%' }} wrap={false} justify="center">*/}
             {/*    <Col span={12}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts} wontonPower={universes.wonTonPower + 1} /></Col>*/}

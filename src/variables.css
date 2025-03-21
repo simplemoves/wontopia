@@ -1,6 +1,7 @@
 :root {
   --primary-color: #d63e0e;
   --secondary-color: gray;
+  --disabled-color: #656565;
   --attention-color: #aea482;
   --win-color: #8cae82;
   --loose-color: #a882ae;

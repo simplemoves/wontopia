@@ -18,9 +18,9 @@ export const Game = ({ walletAddress }: { walletAddress: Address }) => {
         <Wontopia/>
         <Row wrap={false} className='caption'>
           <Col flex={'auto'} className='wallet-connected'>
-            <div className='container1'>
-              <div className='upper-row'>Connected to the wallet</div>
-              <div className='down-row'>{walletAddressStr}</div>
+            <div className='wallet-connected-container'>
+              <div className='wallet-connected-upper-row'>Connected to the wallet</div>
+              <div className='wallet-connected-down-row'>{walletAddressStr}</div>
             </div>
           </Col>
           <Col>

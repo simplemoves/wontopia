@@ -3,7 +3,7 @@ import { App } from './App.tsx'
 import './variables.css'
 import './fonts.css'
 import './index.css'
-import { TonConnectUIProvider } from '@tonconnect/ui-react'
+import { THEME, TonConnectUIProvider } from '@tonconnect/ui-react'
 import WebApp from '@twa-dev/sdk'
 import eruda from 'eruda'
 import { Provider } from 'urql';
@@ -16,7 +16,7 @@ const manifestUrl = "https://simplemoves.github.io/wontopia-nft/tonconnect-manif
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider value={graphQLClient}>
-  <TonConnectUIProvider manifestUrl={manifestUrl}>
+  <TonConnectUIProvider manifestUrl={manifestUrl} uiPreferences={{theme: THEME.DARK}}>
     <App />
   </TonConnectUIProvider>
   </Provider>,

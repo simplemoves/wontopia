@@ -1,0 +1,12 @@
+.no-nfts {
+  align-content: center;
+  text-align: center;
+  font-family: 'BebasNeue', Arial, serif;
+  padding-right: 14vw;
+  /*font-family: 'Oxygen', Arial, serif;*/
+  font-size: 5vw;
+  color: var(--attention-color);
+  font-weight: 400;
+  letter-spacing: 0.2vw;
+  height: 100%;
+}
