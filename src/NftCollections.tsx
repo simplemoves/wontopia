@@ -30,7 +30,7 @@ export function NftCollections({ walletAddressStr, universes }: { walletAddressS
         label: getCaption('1', 'WIN'),
         children: (
             <Row style={{ width: '100%' }} wrap={false} justify="center">
-              <Col style={{ minWidth: '100%' }}><NftCollection walletAddressStr={walletAddressStr} cType={'WIN'} nfts={filteredWinNfts} wontonPower={universes.wonTonPower + 1} /></Col>
+              <Col style={{ minWidth: '100%' }}><NftCollection walletAddressStr={walletAddressStr} nfts={filteredWinNfts} /></Col>
             </Row>
         ),
       },
@@ -39,7 +39,7 @@ export function NftCollections({ walletAddressStr, universes }: { walletAddressS
         label: getCaption('2', 'LOOSE'),
         children: (
             <Row style={{ width: '100%' }} wrap={false} justify="center">
-              <Col style={{ minWidth: '100%' }}><NftCollection  walletAddressStr={walletAddressStr} cType={'LOOSE'} nfts={filteredLooseNfts} wontonPower={universes.wonTonPower + 1} /></Col>
+              <Col style={{ minWidth: '100%' }}><NftCollection  walletAddressStr={walletAddressStr} nfts={filteredLooseNfts} /></Col>
             </Row>
         ),
       },

@@ -7,12 +7,17 @@ import { useWontopiaStore } from "./store/WontopiaStore.ts";
 import { NftItemPreview } from "./NftItemPreview.tsx";
 import { useGameStore } from "./store/GameStore.ts";
 import { useWontopiaNftPlay } from "./hooks/useWontopiaNftPlay.ts";
+import { printJson } from "./lib/ErrorHandler.ts";
 
 const DEFAULT_TITLE = "Select Nft";
 
 export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverses, walletAddressStr: string }) => {
     const { getFilteredNfts, nfts } = useWontopiaStore(walletAddressStr)();
-    const winNfts = useMemo(() => getFilteredNfts(universes.wonTonPower - 1, 'WIN'), [ universes.wonTonPower, nfts, getFilteredNfts ]);
+    const winNfts = useMemo(() => {
+        const winNfts = getFilteredNfts(universes.wonTonPower - 1, 'WIN')
+        console.log(`Updating winNfts: ${printJson(winNfts)}`);
+        return winNfts;
+    }, [ universes.wonTonPower, nfts, getFilteredNfts ]);
     const [ nft, setNft ] = useState<Nft | undefined>();
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
     const { sendNftBet, playState, paused } = useWontopiaNftPlay(nft, universes, walletAddressStr);
@@ -39,31 +44,32 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
         setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
     }, [ winNfts, setNft, setTitle ]);
 
-    const items: MenuProps["items"] = useMemo(() => {
-        return Object.values(winNfts).map(nft => {
-            return {
-                key: nft.nft_index.toString(),
-                label: `Nft #${nft.nft_index}`,
-            }
-        });
-    }, [ winNfts ]);
-
-    const menuProps = {
-        items,
-        selectable: true,
-        onClick: handleItemClick,
-    };
+    const menuProps = useMemo(() => {
+        console.log(`winNfts in items: ${printJson(winNfts)}`);
+        return {
+            items: Object.values(winNfts).map(nft => {
+                return {
+                    key: nft.nft_index.toString(),
+                    label: `Nft #${nft.nft_index}`,
+                }
+            }),
+            selectable: true,
+            onClick: handleItemClick,
+        };
+    }, [ winNfts, handleItemClick ]);
 
     const [ previewVisible, setPreviewVisible ] = useState(false);
 
     if (!paused) {
-        return <div className={className}>{statusDescription}</div>
+        console.log(`paused: winNfts in items: ${printJson(winNfts)}`);
+        return <div className={className}><div className="content">{statusDescription}</div></div>
     }
 
     if (winNfts.length < 1) {
         return <div className='no-nfts'>No NFTs to Play</div>
     }
 
+    console.log(`winNfts: ${printJson(winNfts)}`);
     return (
         <div style={{ display: "flex", flexFlow: "column" }}>
             <div style={{ display: "flex", flexFlow: "row" }}>

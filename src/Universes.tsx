@@ -7,13 +7,13 @@ import { UniversesDescription } from "./UniversesDescription";
 import { PlayButton } from "./PlayButton";
 import { PlayNft } from "./PlayNft";
 import { useGameStore } from "./store/GameStore.ts";
-import { printJson } from "./lib/ErrorHandler.ts";
+// import { printJson } from "./lib/ErrorHandler.ts";
 
 export const Universes = ({ walletAddressStr, onUniversesChange }: { walletAddressStr: string, onUniversesChange: (universes: BEUniverses) => void }) => {
   const [ wontonPower, setWontonPower ] = useState(0);
   const [ universes, setUniverses ] = useState(globalUniversesHolder.universesHolder[0]);
   const game = useGameStore(walletAddressStr, universes.wonTonPower)(state => state.game);
-  console.log(`Game: ${printJson(game)}`);
+  // console.log(`Game: ${printJson(game)}`);
 
   useEffect(() => {
     setUniverses(globalUniversesHolder.universesHolder[wontonPower]);

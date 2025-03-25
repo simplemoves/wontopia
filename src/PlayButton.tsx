@@ -24,7 +24,7 @@ export function PlayButton({ universes, walletAddressStr }: { universes: BEUnive
     }, [ playState, paused, setDelayed, setPaused, setPlayersToWait, setState ]);
 
     if (!paused) {
-        return <div className={className}>{statusDescription}</div>
+        return <div className={className}><div className="content">{statusDescription}</div></div>
     }
 
     return <Button

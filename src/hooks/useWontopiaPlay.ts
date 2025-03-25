@@ -66,9 +66,10 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string
 
         const needToPause = !activePlayStates[playState.last_event.state];
         setPaused(needToPause);
-        if (needToPause) {
-            setRequested(false);
-        }
+        setRequested(!needToPause)
+        // if (needToPause) {
+        //     setRequested(false);
+        // }
     }, [ playState, requested, setPaused, setRequested ]);
 
     useEffect(() => {

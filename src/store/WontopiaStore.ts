@@ -71,7 +71,7 @@ const createWontopiaStore = (walletAddressStr: string) => create<NftStore>()(
                 },
                 getNfts: (wontonPower): Nft[] => Object.values(get().nfts[wontonPower] ?? {}).filter(nft => nft.state.type === 'NFT'),
                 getFilteredNfts: (wontonPower, cType): Nft[] => {
-                    return get().getNfts(wontonPower).filter(nft => nft.collection_type === cType && nft.state.type === 'NFT');
+                    return get().getNfts(wontonPower).filter(nft => nft.collection_type === cType);
                 },
                 setRunning: (wontonPower, isRunning) => set({ ... get().running, [wontonPower]: isRunning }),
                 isRunning: (wontonPower) => get().running[wontonPower] ?? false,
