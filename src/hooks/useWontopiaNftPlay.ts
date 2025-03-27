@@ -11,7 +11,7 @@ import { useNftWatcher } from "./useNftWatcher.ts";
 import { WonTonNftItemContract } from "../wrappers/WonTonNftItemContract.ts";
 
 export function useWontopiaNftPlay(nft: Nft|undefined, universes: BEUniverses, walletAddressStr: string) {
-    const { startGame, stopGame, getGameState, markNftAsBet } = useWontopiaStore(walletAddressStr)();
+    const { startGame, stopGame, getGameState, markNftAsBet, startedAt } = useWontopiaStore(walletAddressStr, universes.wonTonPower)();
     const { handleUpdate } = useNftWatcher(walletAddressStr, universes);
     const { sender } = useTonConnect();
     const nftContract = useMemo(() => { return nft ? WonTonNftItemContract.createFromAddressStr(nft.nft_address) : undefined }, [ nft?.nft_address ]);
@@ -19,7 +19,6 @@ export function useWontopiaNftPlay(nft: Nft|undefined, universes: BEUniverses, w
     const [ playState, setPlayState ] = useState<PlayStateEventsHolder | undefined>();
     const [ requested, setRequested ] = useState<boolean>(false);
     const [ paused, setPaused ] = useState<boolean>(false);
-    const [ startedAt, setStartedAt ] = useState(getGameState(universes.wonTonPower).startedAt ?? new Date())
 
     // Run every time universes, walletAddress parameters change, to get the current play state of the wallet
     useEffect(() => {
@@ -35,7 +34,7 @@ export function useWontopiaNftPlay(nft: Nft|undefined, universes: BEUniverses, w
         variables: {
             walletAddressStr: walletAddressStr,
             power: universes.wonTonPower,
-            startedAt: startedAt.toISOString(),
+            startedAt: startedAt,
         },
         pause: paused,
     }, handlePlayStateSubscriptionResult);
@@ -47,7 +46,7 @@ export function useWontopiaNftPlay(nft: Nft|undefined, universes: BEUniverses, w
     }, [ data, setPlayState ]);
 
     useEffect(() => {
-        if (playState?.last_event.state == UNKNOWN && !requested) {
+        if (playState?.event.state == UNKNOWN && !requested) {
             setPaused(true);
             return;
         }
@@ -56,11 +55,11 @@ export function useWontopiaNftPlay(nft: Nft|undefined, universes: BEUniverses, w
             return;
         }
 
-        if ((playState?.last_event.state == "WIN" || playState?.last_event.state == "LOOSE") && requested) {
+        if ((playState?.event.state == "WIN" || playState?.event.state == "LOOSE") && requested) {
             handleUpdate()
         }
 
-        const needToPause = !activePlayStates[playState.last_event.state];
+        const needToPause = !activePlayStates[playState.event.state];
         setPaused(needToPause);
         if (needToPause) {
             setRequested(false);

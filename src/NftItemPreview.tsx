@@ -14,12 +14,12 @@ export function NftItemPreview({ nft, setPreviewVisible, walletAddressStr }: {
         walletAddressStr: string
     }) {
     const { sendBurn }  = useNftItemContract(Address.parse(nft.nft_address))
-    const markNftBurned = useWontopiaStore(walletAddressStr)((state) => state.markNftAsBurned);
+    const markNftBurned = useWontopiaStore(walletAddressStr, nft.wonton_power)((state) => state.markNftAsBurned);
     const sendBurnNft = useCallback(async () => {
         setPreviewVisible(false);
         const sent = await sendBurn();
         if (sent) {
-          markNftBurned(nft);
+          markNftBurned(nft.nft_address);
         }
     }, [sendBurn, markNftBurned, nft])
 

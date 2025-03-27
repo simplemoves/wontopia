@@ -12,9 +12,9 @@ import { printJson } from "./lib/ErrorHandler.ts";
 const DEFAULT_TITLE = "Select Nft";
 
 export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverses, walletAddressStr: string }) => {
-    const { getFilteredNfts, nfts } = useWontopiaStore(walletAddressStr)();
+    const { getFilteredNfts, nfts } = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)();
     const winNfts = useMemo(() => {
-        const winNfts = getFilteredNfts(universes.wonTonPower - 1, 'WIN')
+        const winNfts = getFilteredNfts('WIN');
         console.log(`Updating winNfts: ${printJson(winNfts)}`);
         return winNfts;
     }, [ universes.wonTonPower, nfts, getFilteredNfts ]);
@@ -22,19 +22,19 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
     const { sendNftBet, playState, paused } = useWontopiaNftPlay(nft, universes, walletAddressStr);
     const { setDelayed, setPaused, setPlayersToWait, setState } = useGameStore(walletAddressStr, universes.wonTonPower)();
-    const [statusDescription, className] = useMemo(() => playStateDescriptions(playState?.last_event.state), [playState?.last_event.state])
+    const [statusDescription, className] = useMemo(() => playStateDescriptions(playState?.event.state), [ playState?.event.state])
 
     useEffect(() => {
         let isDelayed = false;
         if (!paused) {
-            const prev = playState?.last_event.stateChangedAt.getTime();
+            const prev = playState?.event.stateChangedAt.getTime();
             isDelayed = !!(prev && ((Date.now() - prev) > 1000 * 25));
         }
 
         setPaused(paused);
         setDelayed(isDelayed);
         setPlayersToWait(playState?.players_to_wait ?? 3);
-        setState(playState?.last_event.state ?? 'UNKNOWN');
+        setState(playState?.event.state ?? 'UNKNOWN');
     }, [playState, paused, setDelayed, setPaused, setPlayersToWait]);
 
 

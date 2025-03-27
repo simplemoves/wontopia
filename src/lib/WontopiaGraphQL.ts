@@ -56,9 +56,8 @@ export const playStateSubscriptionResultHandler = (eventsHolder: PlayStateEvents
   const newPlayState = PlayStateEventSchema.parse(newResult.playState)
   const event = { ...newPlayState, id: uuidv4().toString() }
   return {
-    last_event: event,
+    event,
     players_to_wait: newResult.playState.playersToWait ?? 3,
-    prev_event: eventsHolder?.last_event.state !== event.state ? eventsHolder?.last_event : eventsHolder?.prev_event,
-    started_at: eventsHolder?.last_event ? eventsHolder.started_at : new Date(),
+    started_at: eventsHolder?.event ? eventsHolder.started_at : new Date(),
   }
 };

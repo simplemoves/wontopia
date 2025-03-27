@@ -50,7 +50,7 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string
 
     useEffect(() => {
         console.log(`Running useEffect in useWontopiaPlay with requested: ${requested} with playstate: ${printJson(playState)}`)
-        if (playState?.last_event.state == UNKNOWN && !requested) {
+        if (playState?.event.state == UNKNOWN && !requested) {
             setPaused(true);
             return;
         }
@@ -59,12 +59,12 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string
             return;
         }
 
-        if ((playState?.last_event.state == "WIN" || playState?.last_event.state == "LOOSE") && requested) {
+        if ((playState?.event.state == "WIN" || playState?.event.state == "LOOSE") && requested) {
             console.log(`Running useEffect in useWontopiaPlay call handleUpdate`)
             handleUpdate()
         }
 
-        const needToPause = !activePlayStates[playState.last_event.state];
+        const needToPause = !activePlayStates[playState.event.state];
         setPaused(needToPause);
         setRequested(!needToPause)
         // if (needToPause) {
