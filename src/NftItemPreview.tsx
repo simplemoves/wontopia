@@ -4,24 +4,20 @@ import { Nft } from './lib/Types';
 import { BurnButton } from './BurnButton';
 import { useCallback, useMemo } from 'react';
 import { mapNftToDescriptionProps } from './workers/WonTonNftTools';
-import { useNftItemContract } from './hooks/useNftItemContract';
-import { Address } from '@ton/core';
 import { useWontopiaStore } from "./store/WontopiaStore.ts";
+import { useTonConnect } from "./hooks/useTonConnect.ts";
 
 export function NftItemPreview({ nft, setPreviewVisible, walletAddressStr }: {
         nft: Nft,
         setPreviewVisible: (previeVisible: boolean) => void,
         walletAddressStr: string
     }) {
-    const { sendBurn }  = useNftItemContract(Address.parse(nft.nft_address))
-    const markNftBurned = useWontopiaStore(walletAddressStr, nft.wonton_power)((state) => state.markNftAsBurned);
+    const { sender } = useTonConnect();
+    const sendBurn = useWontopiaStore(walletAddressStr, nft.wonton_power - 1)(s => s.sendBurn);
     const sendBurnNft = useCallback(async () => {
         setPreviewVisible(false);
-        const sent = await sendBurn();
-        if (sent) {
-          markNftBurned(nft.nft_address);
-        }
-    }, [sendBurn, markNftBurned, nft])
+        await sendBurn(sender, nft.nft_address);
+    }, [ sendBurn, sender, nft.nft_address ])
 
     const items = useMemo(() => mapNftToDescriptionProps(nft), [nft]);
 

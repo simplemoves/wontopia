@@ -1,0 +1,9 @@
+.empty-nft-collection {
+  align-content: center;
+  text-align: center;
+  font-family: 'Oxygen', Arial, serif;
+  font-size: 4vw;
+  color: var(--attention-color);
+  font-weight: 600;
+  letter-spacing: 1px;
+}

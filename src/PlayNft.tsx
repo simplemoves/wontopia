@@ -1,45 +1,26 @@
 import './PlayNft.css'
-import { BEUniverses, Nft, playStateDescriptions } from "./lib/Types.ts";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { BEUniverses, Nft } from "./lib/Types.ts";
+import { useCallback, useMemo, useState } from "react";
 import { Button, Dropdown, Image, MenuProps, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useWontopiaStore } from "./store/WontopiaStore.ts";
 import { NftItemPreview } from "./NftItemPreview.tsx";
-import { useGameStore } from "./store/GameStore.ts";
-import { useWontopiaNftPlay } from "./hooks/useWontopiaNftPlay.ts";
 import { printJson } from "./lib/ErrorHandler.ts";
+import { useTonConnect } from "./hooks/useTonConnect.ts";
+import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 
 const DEFAULT_TITLE = "Select Nft";
 
 export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverses, walletAddressStr: string }) => {
-    const { getFilteredNfts, nfts } = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)();
-    const winNfts = useMemo(() => {
-        const winNfts = getFilteredNfts('WIN');
-        console.log(`Updating winNfts: ${printJson(winNfts)}`);
-        return winNfts;
-    }, [ universes.wonTonPower, nfts, getFilteredNfts ]);
+    const { sender } = useTonConnect();
+    const { stateDescription, stateClassName, subscriptionPaused, sendBetNft } = useWontopiaPlay(universes, walletAddressStr);
+    const winNfts = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.winNfts);
     const [ nft, setNft ] = useState<Nft | undefined>();
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
-    const { sendNftBet, playState, paused } = useWontopiaNftPlay(nft, universes, walletAddressStr);
-    const { setDelayed, setPaused, setPlayersToWait, setState } = useGameStore(walletAddressStr, universes.wonTonPower)();
-    const [statusDescription, className] = useMemo(() => playStateDescriptions(playState?.event.state), [ playState?.event.state])
-
-    useEffect(() => {
-        let isDelayed = false;
-        if (!paused) {
-            const prev = playState?.event.stateChangedAt.getTime();
-            isDelayed = !!(prev && ((Date.now() - prev) > 1000 * 25));
-        }
-
-        setPaused(paused);
-        setDelayed(isDelayed);
-        setPlayersToWait(playState?.players_to_wait ?? 3);
-        setState(playState?.event.state ?? 'UNKNOWN');
-    }, [playState, paused, setDelayed, setPaused, setPlayersToWait]);
-
+    const [ previewVisible, setPreviewVisible ] = useState(false);
 
     const handleItemClick: MenuProps['onClick'] = useCallback(({ key }: { key: string }) => {
-        const nft = winNfts.find(nft => nft.nft_index.toString() === key);
+        const nft = winNfts[key];
         setNft(nft);
         setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
     }, [ winNfts, setNft, setTitle ]);
@@ -49,7 +30,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
         return {
             items: Object.values(winNfts).map(nft => {
                 return {
-                    key: nft.nft_index.toString(),
+                    key: nft.nft_address,
                     label: `Nft #${nft.nft_index}`,
                 }
             }),
@@ -58,18 +39,17 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
         };
     }, [ winNfts, handleItemClick ]);
 
-    const [ previewVisible, setPreviewVisible ] = useState(false);
+    const onClickHandler = useCallback(() => { sendBetNft(sender, nft?.nft_address).catch(console.error); }, [ sendBetNft, sender ]);
 
-    if (!paused) {
-        console.log(`paused: winNfts in items: ${printJson(winNfts)}`);
-        return <div className={className}><div className="content">{statusDescription}</div></div>
+    if (!subscriptionPaused) {
+        return <div className={stateClassName}><div className="content">{stateDescription}</div></div>
     }
 
-    if (winNfts.length < 1) {
+    if (Object.keys(winNfts).length < 1) {
         return <div className='no-nfts'>No NFTs to Play</div>
     }
 
-    console.log(`winNfts: ${printJson(winNfts)}`);
+    // console.log(`winNfts: ${printJson(winNfts)}`);
     return (
         <div style={{ display: "flex", flexFlow: "column" }}>
             <div style={{ display: "flex", flexFlow: "row" }}>
@@ -92,7 +72,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
                                     imageRender: () => (<NftItemPreview nft={nft} setPreviewVisible={setPreviewVisible} walletAddressStr={walletAddressStr}/>),
                                     toolbarRender: () => null,
                                 }}/>
-                            <Button color="default" variant="solid" onClick={sendNftBet} disabled={!nft} className="play-nft-button">Play</Button>
+                            <Button color="default" variant="solid" onClick={onClickHandler} disabled={!nft} className="play-nft-button">Play</Button>
                         </>
                     ) : null}
                 </Space>

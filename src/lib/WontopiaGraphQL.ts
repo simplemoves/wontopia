@@ -37,17 +37,6 @@ export const playStatusSubscriptionQuery = gql`
             state
             stateChangedAt
             playersToWait
-            nfts {
-                address
-                index
-                ownerAddress
-                collectionType
-                power
-                metaUrl
-                status
-                mintedAt
-                updatedAt
-            }            
         }
     }`;
 

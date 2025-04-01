@@ -1,5 +1,6 @@
-import { Address } from '@ton/core';
+import { Address, Sender } from '@ton/core';
 import { z } from 'zod';
+import { CombinedError } from "urql";
 
 export const WIN = "WIN";
 export const LOOSE = "LOOSE";
@@ -44,6 +45,10 @@ export const NON_NFT = "NON_NFT";
 export const NON_MY_NFT = "NON_MY_NFT";
 export const NFT_BET_REQUEST = "NFT_BET_REQUEST";
 export const NFT_BURN_REQUEST = "NFT_BURN_REQUEST";
+export const SetNftTypeSchema = z.union([
+    z.literal(NFT_BET_REQUEST),
+    z.literal(NFT_BURN_REQUEST),
+])
 export const NftTypeSchema = z.union([
     z.literal(NFT),
     z.literal(NON_NFT),
@@ -226,12 +231,12 @@ export const PlayStateEventSchema = z.object({
     state: PlayStateSchema,
     playersToWait: z.number().optional(),
     nft: PlayStateEventNftSchema.optional(),
-    stateChangedAt: z.string().transform((str) => new Date(str)),
+    stateChangedAt: z.string().optional(),
 });
 
 export const PlayStateEventsHolderSchema = z.object({
     event: PlayStateEventSchema,
-    // started_at: z.date(),
+    started_at: z.date().optional(),
     players_to_wait: z.number(),
 });
 
@@ -261,42 +266,54 @@ export const GetGameStateFunctionSchema = z.function().args().returns(PlayStateS
 export const StartGameFunctionSchema = z.function().args().returns(z.void());
 export const StopGameFunctionSchema = z.function().args().returns(z.void());
 export const IsRunningFunctionSchema = z.function().args().returns(z.boolean());
-export const SetNftStateFunctionSchema = z.function().args(z.string(), NftTypeSchema).returns(z.void());
+export const SetNftStateFunctionSchema = z.function().args(z.string(), SetNftTypeSchema).returns(z.void());
 export const MarkNftAsBurnedFunctionSchema = z.function().args(z.string()).returns(z.void());
 export const MarkNftAsBetFunctionSchema = z.function().args(z.string()).returns(z.void());
 export const GetNftsFunctionSchema = z.function().args().returns(NftSchema.array());
-export const GetFilteredNftsFunctionSchema = z.function().args(CollectionTypeSchema).returns(NftSchema.array());
 export const AddNftFunctionSchema = z.function().args(NftSchema).returns(z.void());
-export const GameStateHandlerFunctionSchema = z.function().args(z.union([PlayStateEventsHolderSchema, z.undefined()]), PlayStateSubscriptionResultSchema).returns(PlayStateEventsHolderSchema);
+export const GameStateHandlerFunctionSchema = z.function().args(PlayStateSubscriptionResultSchema, z.union([z.custom<CombinedError>(), z.undefined()])).returns(z.void());
 export const ClearStorageFunctionSchema = z.function().args().returns(z.void());
 export const StorageIsEmptyFunctionSchema = z.function().args().returns(z.boolean());
 export const StartNftsRequestFunctionSchema = z.function().args().returns(z.void());
 export const StopNftsRequestFunctionSchema = z.function().args().returns(z.void());
+export const HandleUpdateFunctionSchema = z.function().args().returns(z.void());
+export const StartSubscriptionFunctionSchema = z.function().args().returns(z.void());
+export const SendBetFunctionSchema = z.function().args(z.custom<Sender>(), z.custom<Address>()).returns(z.promise(z.void()));
+export const SendBurnFunctionSchema = z.function().args(z.custom<Sender>(), z.string()).returns(z.promise(z.void()));
+export const SendBetNftFunctionSchema = z.function().args(z.custom<Sender>(), z.union([z.string(), z.undefined()])).returns(z.promise(z.void()));
+// export const GetFilteredNftsFunctionSchema = z.function().args(CollectionTypeSchema).returns(NftSchema.array());
+// export const GetWinNftsFunctionSchema = z.function().args().returns(NftSchema.array());
+// export const GetLooseNftsFunctionSchema = z.function().args().returns(NftSchema.array());
 
 export const NftStoreSchema = z.object({
     walletAddress: z.string(),
     power: z.number(),
     nfts: NftsHistorySchema,
+    winNfts: NftsHistorySchema,
+    looseNfts: NftsHistorySchema,
 
     isNftsRequestInProgress: z.boolean(),
 
-    running: z.boolean(),
+    startSubscription: StartSubscriptionFunctionSchema,
+    subscriptionPaused: z.boolean(),
+    gameIsRunning: z.boolean(),
+    isGameTakingTooLong: z.boolean(),
     state: PlayStateSchema,
     playersToWait: z.number(),
     startedAt: z.string().optional(),
     stateChangedAt: z.string().optional(),
 
-    getGameState: GetGameStateFunctionSchema,
     startGame: StartGameFunctionSchema,
     stopGame: StopGameFunctionSchema,
-    isGameRunning: IsRunningFunctionSchema,
 
     setNftState: SetNftStateFunctionSchema,
     markNftAsBurned: MarkNftAsBurnedFunctionSchema,
     markNftAsBet: MarkNftAsBetFunctionSchema,
     addNft: AddNftFunctionSchema,
-    getNfts: GetNftsFunctionSchema,
-    getFilteredNfts: GetFilteredNftsFunctionSchema,
+    // getFilteredNfts: GetFilteredNftsFunctionSchema,
+    // getWinNfts: GetWinNftsFunctionSchema,
+    // getLooseNfts: GetLooseNftsFunctionSchema,
+
     clearStorage: ClearStorageFunctionSchema,
     storageIsEmpty: StorageIsEmptyFunctionSchema,
 
@@ -304,6 +321,12 @@ export const NftStoreSchema = z.object({
 
     startNftsRequest: StartNftsRequestFunctionSchema,
     stopNftsRequest: StopNftsRequestFunctionSchema,
+
+    handleUpdate: HandleUpdateFunctionSchema,
+
+    sendBet: SendBetFunctionSchema,
+    sendBurn: SendBurnFunctionSchema,
+    sendBetNft: SendBetNftFunctionSchema,
 });
 
 ////////////////////////////////
@@ -334,6 +357,7 @@ export type NftsVariables = z.infer<typeof NftsVariablesSchema>;
 export type NftsResult = z.infer<typeof NftsResultSchema>;
 export type PlayState = z.infer<typeof PlayStateSchema>;
 export type Game = z.infer<typeof GameSchema>;
+export type SetNftType = z.infer<typeof SetNftTypeSchema>;
 
 export const INITIAL_GAME: Game = {
     state: 'UNKNOWN',
