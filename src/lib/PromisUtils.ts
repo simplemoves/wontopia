@@ -1,30 +1,6 @@
-import * as child_process from "child_process";
 import { getErrorMessage } from "./ErrorHandler";
 
 export const wait = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
-export const trim = (str: string) => str.replace(/\r?\n|\r/, "");
-
-export const spawn = (command: string, args: string[]) => new Promise<boolean>((resolve, reject) => {
-    const spawn = child_process.spawn(command, args);
-
-    spawn.stdout.on('data', (data) => {
-        console.log(trim(data.toString()));
-    })
-
-    spawn.stderr.on('data', (error) => {
-        const error_str = trim(error.toString());
-        console.error(error_str);
-        reject(Error(error_str));
-    })
-
-    spawn.on('exit', code => {
-        if (code === 0) {
-            resolve(true);
-        } else {
-            reject(Error(code?.toString()));
-        }
-    })
-});
 
 export class RateLimiter {
     private waitUntil: number;
