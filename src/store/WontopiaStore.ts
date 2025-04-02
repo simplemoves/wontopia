@@ -101,7 +101,12 @@ const createWontopiaStore = (
                         console.error('Error receiving subscription data', error);
                         return;
                     }
-                    console.log(`new result: ${JSON.stringify(newResult)}, typeOf StartDate: ${typeof newResult.playState.stateChangedAt}`);
+                    if (!newResult) {
+                        // console.log('newResult was not defined');
+                        return;
+                    }
+                    // console.log(`new result: ${JSON.stringify(newResult)}`);
+                    // console.log(`error: ${error}`);
                     const playStateEvent = PlayStateEventSchema.parse(newResult.playState);
                     playStateEvent.playersToWait = playStateEvent.playersToWait ? playStateEvent.playersToWait : 3;
 

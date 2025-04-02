@@ -5,7 +5,7 @@ import { Button, Dropdown, Image, MenuProps, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useWontopiaStore } from "./store/WontopiaStore.ts";
 import { NftItemPreview } from "./NftItemPreview.tsx";
-import { printJson } from "./lib/ErrorHandler.ts";
+// import { printJson } from "./lib/ErrorHandler.ts";
 import { useTonConnect } from "./hooks/useTonConnect.ts";
 import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 
@@ -26,7 +26,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     }, [ winNfts, setNft, setTitle ]);
 
     const menuProps = useMemo(() => {
-        console.log(`winNfts in items: ${printJson(winNfts)}`);
+        // console.log(`winNfts in items: ${printJson(winNfts)}`);
         return {
             items: Object.values(winNfts).map(nft => {
                 return {

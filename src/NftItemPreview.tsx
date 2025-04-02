@@ -1,5 +1,5 @@
 import './App.css';
-import { Card, Descriptions, Flex, Image } from "antd";
+import { Card, Descriptions, Flex, Image, Skeleton } from "antd";
 import { Nft } from './lib/Types';
 import { BurnButton } from './BurnButton';
 import { useCallback, useMemo } from 'react';
@@ -29,6 +29,8 @@ export function NftItemPreview({ nft, setPreviewVisible, walletAddressStr }: {
                     <Image
                         src={nft.nft_meta?.image}
                         width={"20rem"}
+                        height={"20rem"}
+                        placeholder={<Skeleton.Image active={true} style={{ width: "20rem", height: "20rem" }} />}
                         preview={false}/>
                     <Flex vertical={false} justify='center' gap={'small'} >
                         <BurnButton disabled={nft.state.type!=='NFT'} sendBurn={sendBurnNft} />
