@@ -18,6 +18,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const { stateDescription, stateClassName, subscriptionPaused, sendBetNft } = useWontopiaPlay(universes, walletAddressStr);
     const winNfts = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.winNfts);
     const [ nft, setNft ] = useState<Nft | undefined>();
+    console.log(`PlayNft nft is ${printJson(nft)} and Universe: ${universes.wonTonPower}`);
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
     const [ previewVisible, setPreviewVisible ] = useState(false);
 
