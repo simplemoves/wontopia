@@ -67,7 +67,7 @@ export const Universes = ({ walletAddressStr, onUniversesChange }: { walletAddre
                 </Col>
                 <Col flex={'auto'}>&nbsp;</Col>
                 <Col>
-                    {wontonPower === 0 ?
+                    {universes.wonTonPower === 0 ?
                      (<PlayButton universes={universes} walletAddressStr={walletAddressStr}/>) :
                      (<PlayNft universes={universes} walletAddressStr={walletAddressStr}/>)
                     }
