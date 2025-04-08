@@ -22,7 +22,7 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string
         console.log(`useWontopiaPlay installed for: ${walletAddressStr}, universe: ${universes.wonTonPower}`);
         startSubscription();
         handleUpdate();
-    }, []);
+    }, [walletAddressStr, universes.wonTonPower]);
 
     console.log(`subscriptionPaused: ${subscriptionPaused}`);
 
