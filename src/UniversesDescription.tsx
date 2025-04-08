@@ -2,7 +2,7 @@ import { Divider, Drawer, Table, TableProps } from 'antd';
 import { AccentB, AccentC, AccentT, TON } from './Typography';
 import { globalUniversesHolder } from './store/GlobalUniversesHolder';
 import { UniversesPrizesItem } from './lib/Types';
-import { DownOutlined, ReloadOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 
 const columns: TableProps<UniversesPrizesItem>['columns'] = [
   {
