@@ -83,6 +83,7 @@ const createWontopiaStore = (
                 },
                 markNftAsBet: (nft_address) => { get().setNftState(nft_address, 'NFT_BET_REQUEST') },
                 addNft: (newNft: Nft) => {
+                    console.log(`Add nft: ${newNft.wonton_power}/${newNft.nft_index} for address: ${get().walletAddress} and universe: ${get().power}`);
                     const { nfts, winNfts, looseNfts } = get();
                     set({
                         nfts: { ... nfts, [newNft.nft_address]: newNft },
@@ -248,6 +249,7 @@ const requestNfts = async (get: () => NftStore) => {
                     nft_meta: nftMeta,
                 });
             }
+            console.debug(`${new Date().getTime()} | Finished processing ${nfts.length} nfts...`);
         }
     } catch (error) {
         console.error(`${new Date().getTime()} | Requesting nfts failed with error: ${getErrorMessage(error)}`);
