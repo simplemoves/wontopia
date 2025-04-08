@@ -12,6 +12,7 @@ import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 const DEFAULT_TITLE = "Select Nft";
 
 export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverses, walletAddressStr: string }) => {
+    console.log(`PlayNft for ${walletAddressStr} and Universe: ${universes.wonTon}`);
     const { sender } = useTonConnect();
     const { stateDescription, stateClassName, subscriptionPaused, sendBetNft } = useWontopiaPlay(universes, walletAddressStr);
     const winNfts = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.winNfts);
