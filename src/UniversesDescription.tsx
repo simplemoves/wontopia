@@ -33,9 +33,9 @@ export const UniversesDescription = ({isOpen, onClose}: {isOpen: boolean, onClos
       <div className='disclaimer'>
         <Divider orientation="left" plain><b>Refresh Universe</b></Divider>
         <p>
-          Clicking the "<ReloadOutlined />" button will initiate the process of finding all items related to <AccentB>Wontopia</AccentB>.
+          {/*Clicking the "<ReloadOutlined />" button will initiate the process of finding all items related to <AccentB>Wontopia</AccentB>.*/}
           Please note that finding all items related to <AccentB>Wontopia</AccentB> may take some time, as it involves requesting them from the external indexer of <TON /> Blockchain.
-          Universe will refresh automatically after playing, so the Player could view the results of the game.
+          Universe will refresh automatically, so the Player could view the results of the games.
         </p>
         <Divider orientation="left" plain><b>Dropdown Universes</b></Divider>
         <p>
