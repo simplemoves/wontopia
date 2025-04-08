@@ -29,16 +29,10 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const handleItemClick: MenuProps['onClick'] = useCallback(({ key }: { key: string }) => {
         const nft = winNfts[key];
         setNft(nft);
-        // setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
+        if (nft) setTitle(`NFT #${nft.nft_index}`);
     }, [ winNfts, setNft, setTitle ]);
-    // }, [ winNfts, setNft, setTitle ]);
-
-    useEffect(() => {
-        setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
-    }, [nft, setTitle]);
 
     const menuProps = useMemo(() => {
-        console.log(`winNfts in items: ${printJson(winNfts)}`);
         return {
             items: Object.values(winNfts).map(nft => {
                 return {
