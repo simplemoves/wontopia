@@ -19,6 +19,7 @@ export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string
 
     // Run every time universes, walletAddress parameters change, to get the current play state of the wallet
     useEffect(() => {
+        console.log(`useWontopiaPlay installed for: ${walletAddressStr}, universe: ${universes.wonTonPower}`);
         startSubscription();
         handleUpdate();
     }, []);
