@@ -15,6 +15,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const { sender } = useTonConnect();
     const { stateDescription, stateClassName, subscriptionPaused, sendBetNft } = useWontopiaPlay(universes, walletAddressStr);
     const winNfts = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.winNfts);
+    const markNftAsBet = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.markNftAsBet);
     const [ nft, setNft ] = useState<Nft | undefined>();
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
     const [ previewVisible, setPreviewVisible ] = useState(false);
@@ -43,7 +44,14 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
         };
     }, [ winNfts, handleItemClick ]);
 
-    const onClickHandler = useCallback(() => { sendBetNft(sender, nft?.nft_address).catch(console.error); }, [ sendBetNft, sender ]);
+    const onClickHandler = useCallback(async () => {
+        const success = await sendBetNft(sender, nft?.nft_address).catch(console.error);
+        if (success) {
+            markNftAsBet(nft?.nft_address);
+            setNft(undefined);
+            setTitle(DEFAULT_TITLE);
+        }
+    }, [ sender, nft?.nft_address, sendBetNft, markNftAsBet, setNft, setTitle ]);
 
     if (!subscriptionPaused) {
         return <div className={stateClassName}><div className="content">{stateDescription}</div></div>

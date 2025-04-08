@@ -76,7 +76,7 @@
 
 .wallet-connected {
   font-family: 'BebasNeue', Arial, serif;
-  font-size: 7vw;
+  font-size: 9.4vw;
   color: gray;
   font-weight: 600;
 }
@@ -179,7 +179,7 @@
 
 .wallet-connected-down-row {
   font-family: 'Oxygen', Arial, serif;
-  font-size: 2vw; /* small font */
+  font-size: 2.75vw; /* small font */
   white-space: nowrap;
   width: 100%; /* always match upper row width */
   overflow: hidden;

@@ -81,7 +81,7 @@ const createWontopiaStore = (
                 markNftAsBurned: (nft_address) => {
                     get().setNftState(nft_address, 'NFT_BURN_REQUEST')
                 },
-                markNftAsBet: (nft_address) => { get().setNftState(nft_address, 'NFT_BET_REQUEST') },
+                markNftAsBet: (nft_address) => { if (nft_address) { get().setNftState(nft_address, 'NFT_BET_REQUEST') } },
                 addNft: (newNft: Nft) => {
                     console.log(`Add nft: ${newNft.wonton_power}/${newNft.nft_index} for address: ${get().walletAddress} and universe: ${get().power}`);
                     const { nfts, winNfts, looseNfts } = get();
@@ -161,8 +161,29 @@ const createWontopiaStore = (
                     }, 3, 100);
 
                     if (success) {
-                        get().startGame()
+                        get().startGame();
                     }
+                },
+                sendBetNft: async (sender, nftAddress) => {
+                    // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
+                    if (!nftAddress) {
+                        return false;
+                    }
+                    const tonNftItemContract = WonTonNftItemContract.createFromAddressStr(nftAddress);
+                    const client = await wonTonClientProvider.wonTonClient();
+                    const openedContract = client.open(tonNftItemContract);
+                    const success = await tryNTimes(async () => {
+                        const queryId = new Date().getTime();
+                        return await openedContract.sendBetNft(sender, { queryId, value: toNano("0.05") })
+                    }, 3, 100);
+
+                    if (success) {
+                        get().startGame();
+                        // get().markNftAsBet(nftAddress);
+                        return true;
+                    }
+
+                    return false;
                 },
                 sendBurn: async (sender, nftAddress) => {
                     // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
@@ -176,23 +197,6 @@ const createWontopiaStore = (
 
                     if (success) {
                         get().markNftAsBurned(nftAddress)
-                    }
-                },
-                sendBetNft: async (sender, nftAddress) => {
-                    // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
-                    if (!nftAddress) {
-                        return;
-                    }
-                    const tonNftItemContract = WonTonNftItemContract.createFromAddressStr(nftAddress);
-                    const client = await wonTonClientProvider.wonTonClient();
-                    const openedContract = client.open(tonNftItemContract);
-                    const success = await tryNTimes(async () => {
-                        const queryId = new Date().getTime();
-                        return await openedContract.sendBetNft(sender, { queryId, value: toNano("0.05") })
-                    }, 3, 100);
-
-                    if (success) {
-                        get().markNftAsBet(nftAddress)
                     }
                 },
             }),
