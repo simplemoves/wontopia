@@ -1,6 +1,6 @@
 import './PlayNft.css'
 import { BEUniverses, Nft } from "./lib/Types.ts";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Dropdown, Image, MenuProps, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useWontopiaStore } from "./store/WontopiaStore.ts";
@@ -24,8 +24,13 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const handleItemClick: MenuProps['onClick'] = useCallback(({ key }: { key: string }) => {
         const nft = winNfts[key];
         setNft(nft);
-        setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
+        // setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
     }, [ winNfts, setNft, setTitle ]);
+    // }, [ winNfts, setNft, setTitle ]);
+
+    useEffect(() => {
+        setTitle(nft ? `NFT #${nft.nft_index}` : DEFAULT_TITLE);
+    }, [nft, setTitle]);
 
     const menuProps = useMemo(() => {
         console.log(`winNfts in items: ${printJson(winNfts)}`);
@@ -39,7 +44,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
             selectable: true,
             onClick: handleItemClick,
         };
-    }, [ winNfts, handleItemClick, universes.wonTonPower ]);
+    }, [ winNfts, handleItemClick ]);
 
     const onClickHandler = useCallback(() => { sendBetNft(sender, nft?.nft_address).catch(console.error); }, [ sendBetNft, sender ]);
 
