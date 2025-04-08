@@ -1,12 +1,15 @@
 // src/urqlClient.ts
 import { cacheExchange, Client, fetchExchange, subscriptionExchange } from 'urql';
 import { createClient as createWSClient } from 'graphql-ws';
+import { testOnly } from "./Constants.ts";
 
 let activeSocket: WebSocket | undefined;
 let timedOut: NodeJS.Timeout | undefined;
 
+const host = testOnly ? "internal.wontopia.win" : "wontopia.win"
+
 const wsClient = createWSClient({
-  url: 'wss://internal.wontopia.win:9443/query',
+  url: `wss://${host}:9443/query`,
   retryAttempts: Infinity,
   shouldRetry: () => true,
   keepAlive: 7500,
@@ -31,7 +34,7 @@ const wsClient = createWSClient({
 });
 
 export const graphQLClient = new Client({
-  url: "https://internal.wontopia.win:9443/query",
+  url: `https://${host}:9443/query`,
   fetch: fetchWithTimeout,
   exchanges: [
       cacheExchange,
