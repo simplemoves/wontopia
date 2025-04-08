@@ -8,6 +8,7 @@ import { NftItemPreview } from "./NftItemPreview.tsx";
 // import { printJson } from "./lib/ErrorHandler.ts";
 import { useTonConnect } from "./hooks/useTonConnect.ts";
 import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
+import { printJson } from "./lib/ErrorHandler.ts";
 
 const DEFAULT_TITLE = "Select Nft";
 
@@ -27,7 +28,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     }, [ winNfts, setNft, setTitle ]);
 
     const menuProps = useMemo(() => {
-        // console.log(`winNfts in items: ${printJson(winNfts)}`);
+        console.log(`winNfts in items: ${printJson(winNfts)}`);
         return {
             items: Object.values(winNfts).map(nft => {
                 return {
@@ -38,7 +39,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
             selectable: true,
             onClick: handleItemClick,
         };
-    }, [ winNfts, handleItemClick ]);
+    }, [ winNfts, handleItemClick, universes.wonTonPower ]);
 
     const onClickHandler = useCallback(() => { sendBetNft(sender, nft?.nft_address).catch(console.error); }, [ sendBetNft, sender ]);
 
