@@ -1,12 +1,12 @@
 // src/urqlClient.ts
 import { cacheExchange, Client, fetchExchange, subscriptionExchange } from 'urql';
 import { createClient as createWSClient } from 'graphql-ws';
-import { testOnly } from "./Constants.ts";
+import { devEnv } from "./Constants.ts";
 
 let activeSocket: WebSocket | undefined;
 let timedOut: NodeJS.Timeout | undefined;
 
-const host = testOnly ? "internal.wontopia.win" : "wontopia.win"
+const host = devEnv ? "internal.wontopia.win" : "wontopia.win"
 
 const wsClient = createWSClient({
   url: `wss://${host}:9443/query`,
