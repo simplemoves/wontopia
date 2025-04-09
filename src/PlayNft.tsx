@@ -21,6 +21,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const [ previewVisible, setPreviewVisible ] = useState(false);
 
     useEffect(() => {
+        console.log(`Install PlayNft`);
         setNft(undefined);
         setTitle(DEFAULT_TITLE);
     }, [walletAddressStr, universes.wonTonPower]);
@@ -46,6 +47,7 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
 
     const onClickHandler = useCallback(async () => {
         const success = await sendBetNft(sender, nft?.nft_address).catch(console.error);
+        console.log(`sendBetNft result: ${success}`);
         if (success) {
             markNftAsBet(nft?.nft_address);
             setNft(undefined);

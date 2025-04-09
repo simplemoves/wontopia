@@ -50,8 +50,11 @@ const createWontopiaStore = (
                 startSubscription: () => { set({ subscriptionPaused: false }); },
 
                 startGame: () => {
+                    console.log(`Start game for universe: ${get().power}`);
                     set({ gameIsRunning: true, startedAt: new Date().toISOString(), isGameTakingTooLong: false });
+                    get().startSubscription();
                     gameTakesTooLongCheck(25000, get, set);
+                    console.log(`Game started for universe: ${get().power}, startedAt: ${get().gameIsRunning}`);
                 },
                 stopGame: () => {
                     set({
@@ -177,9 +180,12 @@ const createWontopiaStore = (
                         const queryId = new Date().getTime();
                         return await openedContract.sendBetNft(sender, { queryId, value: toNano("0.05") })
                     }, 3, 100);
+                    console.log(`sendBetNft result: ${success}`);
 
                     if (success) {
+                        console.log(`Start game`);
                         get().startGame();
+
                         return true;
                     }
 
