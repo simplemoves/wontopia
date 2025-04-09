@@ -51,7 +51,7 @@ const createWontopiaStore = (
 
                 startGame: () => {
                     console.log(`Start game for universe: ${get().power}`);
-                    set({ gameIsRunning: true, startedAt: new Date().toISOString(), isGameTakingTooLong: false });
+                    set({ gameIsRunning: true, startedAt: new Date().toISOString(), isGameTakingTooLong: false, state: 'UNKNOWN' });
                     get().startSubscription();
                     gameTakesTooLongCheck(25000, get, set);
                     console.log(`Game started for universe: ${get().power}, startedAt: ${get().gameIsRunning}`);
@@ -61,7 +61,6 @@ const createWontopiaStore = (
                         subscriptionPaused: true,
                         gameIsRunning: false,
                         startedAt: undefined,
-                        state: 'UNKNOWN',
                         isGameTakingTooLong: false,
                         playersToWait: 3,
                         stateChangedAt: undefined,
