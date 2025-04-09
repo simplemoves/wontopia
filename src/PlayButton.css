@@ -40,29 +40,6 @@
   letter-spacing: 2px;
 }
 
-.luminance {
-  align-content: center;
-  text-align: center;
-  font-family: 'BebasNeue', Arial, serif;
-  font-size: 6vw;
-  font-weight: 300;
-  letter-spacing: 2px;
-  height: 100%;
-  width: 53.0vw;
-  background: 50% 100% / 50% 50% no-repeat radial-gradient(ellipse at bottom, var(--primary-color), transparent, transparent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /*animation: reveal 3000ms ease-in-out forwards 200ms,*/
-  animation: glow 2500ms linear infinite 2000ms;
-}
-
-@keyframes glow {
-  40% {
-    text-shadow: 0 0 3px var(--primary-color);
-  }
-}
-
 .status-get,
 .status-unknown,
 .status-in-play,
@@ -122,11 +99,13 @@
   background-image: conic-gradient(from var(--angle), transparent 50%, var(--bg-color));
   top: 50%;
   left: 50%;
-  translate: -50% -50%;
+  transform: translate3d(-50%, -50%, 0); /* Hardware acceleration */
   z-index: -1;
   padding: 0.2vw;
   border-radius: 2vw;
   animation: 3s spin linear infinite;
+  -webkit-backface-visibility: hidden; /* Fix Safari blur issue */
+  backface-visibility: hidden;
 }
 
 /* Общие свойства для псевдоэлементов before */
