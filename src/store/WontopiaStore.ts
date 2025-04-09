@@ -60,7 +60,6 @@ const createWontopiaStore = (
                     set({
                         subscriptionPaused: true,
                         gameIsRunning: false,
-                        startedAt: undefined,
                         isGameTakingTooLong: false,
                         playersToWait: 3,
                         stateChangedAt: undefined,
