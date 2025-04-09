@@ -1,6 +1,6 @@
 import './PlayNft.css'
 import { BEUniverses, Nft } from "./lib/Types.ts";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button, Dropdown, Image, MenuProps, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useWontopiaStore } from "./store/WontopiaStore.ts";
@@ -20,11 +20,11 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
     const [ previewVisible, setPreviewVisible ] = useState(false);
 
-    useEffect(() => {
-        console.log(`Install PlayNft`);
-        setNft(undefined);
-        setTitle(DEFAULT_TITLE);
-    }, [walletAddressStr, universes.wonTonPower]);
+    // useEffect(() => {
+    //     console.log(`Install PlayNft`);
+    //     setNft(undefined);
+    //     setTitle(DEFAULT_TITLE);
+    // }, [walletAddressStr, universes.wonTonPower]);
 
     const handleItemClick: MenuProps['onClick'] = useCallback(({ key }: { key: string }) => {
         const nft = winNfts[key];
