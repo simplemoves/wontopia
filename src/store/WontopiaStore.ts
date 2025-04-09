@@ -167,6 +167,7 @@ const createWontopiaStore = (
                 sendBetNft: async (sender, nftAddress) => {
                     // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
                     if (!nftAddress) {
+                        console.error(`sendBetTft nftAddress is undefined`);
                         return false;
                     }
                     const tonNftItemContract = WonTonNftItemContract.createFromAddressStr(nftAddress);
@@ -179,7 +180,6 @@ const createWontopiaStore = (
 
                     if (success) {
                         get().startGame();
-                        // get().markNftAsBet(nftAddress);
                         return true;
                     }
 
