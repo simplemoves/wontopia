@@ -75,9 +75,9 @@ export const Universes = ({ walletAddressStr, onUniversesChange }: { walletAddre
             </Row>
             <Row wrap={false} className="universes-row">
                 <Col flex={'auto'}>
-                    {isGameTakingTooLong ? (<div className="sub-status-generic">It can take much longer than expected, as your <b>Game</b> depends on {playersToWait} other player[s]...</div>) : null}
                     {state == "WIN" ? (<div className="sub-status-win">You Won last play. Congratulations!!!</div>) : null}
                     {state == "LOOSE" ? (<div className="sub-status-loose">You Loose last play. Cheer up!!!</div>) : null}
+                    {isGameTakingTooLong ? (<div className="sub-status-generic">It can take much longer than expected, as your <b>Game</b> depends on {playersToWait} other player[s]...</div>) : null}
                 </Col>
             </Row>
             <UniversesDescription isOpen={open} onClose={onClose}/>

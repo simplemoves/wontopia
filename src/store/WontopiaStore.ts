@@ -62,6 +62,7 @@ const createWontopiaStore = (
                         gameIsRunning: false,
                         startedAt: undefined,
                         state: 'UNKNOWN',
+                        isGameTakingTooLong: false,
                         playersToWait: 3,
                         stateChangedAt: undefined,
                     });
