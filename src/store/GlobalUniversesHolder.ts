@@ -1,6 +1,7 @@
 import { address, fromNano } from "@ton/core";
 import { debug } from "console";
 import { FEUniversesHolder } from "../lib/Types";
+import { MenuProps } from "antd";
 
 const wontonPrizeFraction = BigInt(import.meta.env.VITE_WONTON_PRIZE_FRACTION_TON!);
 
@@ -42,3 +43,10 @@ const initUniverses = () => {
 }
 
 export const globalUniversesHolder = initUniverses();
+
+export const universesItems: MenuProps["items"] = Object
+    .values(globalUniversesHolder.universesHolder)
+    .map(universes => ({
+        key: universes.wonTonPower.toString(),
+        label: `Universe ${universes.wonTonPower}`,
+    }));

@@ -1,10 +1,10 @@
 import { create, StoreApi, UseBoundStore } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { activePlayStates, Nft, NftsResult, NftStore, NftsVariables, PlayStateEventNftSchema, PlayStateEventSchema, UNKNOWN } from "../lib/Types";
+import { activePlayStates, Nft, NftsResult, NftStore, NftsVariables, PlayStateEventNftSchema } from "../lib/Types";
 import { nftsQuery } from "../lib/WontopiaGraphQL.ts";
 import { testOnly } from "../lib/Constants.ts";
 import { fetchMeta } from "../providers/WontopiaTonClientProvider.ts";
-import { getErrorMessage } from "../lib/ErrorHandler.ts";
+import { getErrorMessage, printJson } from "../lib/ErrorHandler.ts";
 import { graphQLClient } from "../lib/graphQLClient.ts";
 import { wonTonClientProvider } from "../providers/WonTonClientProvider.ts";
 import { tryNTimes, wait } from "../lib/PromisUtils.ts";
@@ -39,29 +39,27 @@ const createWontopiaStore = (
 
                 isNftsRequestInProgress: false,
 
-                subscriptionPaused: false,
                 gameIsRunning: false,
                 isGameTakingTooLong: false,
                 state: 'UNKNOWN',
-                playersToWait: 3,
                 startedAt: undefined,
                 stateChangedAt: undefined,
-
-                startSubscription: () => { set({ subscriptionPaused: false }); },
 
                 startGame: () => {
                     console.log(`Start game for universe: ${get().power}`);
                     set({ gameIsRunning: true, startedAt: new Date().toISOString(), isGameTakingTooLong: false, state: 'UNKNOWN' });
-                    get().startSubscription();
                     gameTakesTooLongCheck(25000, get, set);
-                    console.log(`Game started for universe: ${get().power}, startedAt: ${get().gameIsRunning}`);
+                    console.log(`Game started for universe: ${get().power}, gameIsRunning: ${get().gameIsRunning}`);
+                },
+                continueGame: () => {
+                    console.log(`Continue game for universe: ${get().power}`);
+                    set({ gameIsRunning: true });
+                    gameTakesTooLongCheck(25000, get, set);
                 },
                 stopGame: () => {
                     set({
-                        subscriptionPaused: true,
                         gameIsRunning: false,
                         isGameTakingTooLong: false,
-                        playersToWait: 3,
                         stateChangedAt: undefined,
                     });
                 },
@@ -97,43 +95,31 @@ const createWontopiaStore = (
                 // getWinNfts: () => get().getFilteredNfts('WIN'),
                 // getLooseNfts: () => get().getFilteredNfts('LOOSE'),
 
-                clearStorage: () => { set({ nfts: {}, gameIsRunning: false, state: 'UNKNOWN', playersToWait: 3, startedAt: undefined, stateChangedAt: undefined }) },
+                clearStorage: () => { set({ nfts: {}, gameIsRunning: false, state: 'UNKNOWN', startedAt: undefined, stateChangedAt: undefined }) },
                 storageIsEmpty: () => Object.keys(get().nfts).length === 0,
-                gameStateHandler: (newResult, error) => {
-                    if (error) {
-                        console.error('Error receiving subscription data', error);
-                        return;
-                    }
-                    if (!newResult) {
-                        // console.log('newResult was not defined');
+                gameStateHandler: (playStateEvent) => {
+                    if (playStateEvent.power != get().power) {
+                        console.error(`Result received for the wrong universe: ${printJson(playStateEvent)}`);
                         return;
                     }
                     // console.log(`new result: ${JSON.stringify(newResult)}`);
                     // console.log(`error: ${error}`);
-                    const playStateEvent = PlayStateEventSchema.parse(newResult.playState);
-                    playStateEvent.playersToWait = playStateEvent.playersToWait ? playStateEvent.playersToWait : 3;
+                    set({ state: playStateEvent.state, stateChangedAt: playStateEvent.stateChangedAt.toISOString() })
 
-                    let stateChangedAt = get().stateChangedAt
-                    if (playStateEvent.state !== get().state || playStateEvent.playersToWait !== get().playersToWait) {
-                        stateChangedAt = new Date().toISOString();
-                    }
-
-                    set({ state: playStateEvent.state, playersToWait: playStateEvent.playersToWait, stateChangedAt: stateChangedAt })
-
-                    // For the reload request we need one state report to decide if we need to stop subscription
-                    if (get().state == UNKNOWN && !get().gameIsRunning) {
-                        set({ subscriptionPaused: true });
-                        return;
-                    }
                     // If game played, need to run NFTs update
                     if (get().state == "WIN" || get().state == "LOOSE") {
                         console.log("Running NFTs list update request")
                         get().handleUpdate()
                     }
-                    // If terminated state reported we need to stop subscription
-                    if (!activePlayStates[get().state]) {
-                        get().stopGame();
+
+                    if (activePlayStates[get().state]) {
+                        // get().continueGame()
+                        set({ gameIsRunning: true });
                         return;
+                    } else {
+                        // If terminated state reported we need to stop game
+                        set({ gameIsRunning: false });
+                        return
                     }
                 },
                 startNftsRequest: () => {
@@ -152,7 +138,7 @@ const createWontopiaStore = (
                         console.error(err);
                     });
                 },
-                sendBet: async (sender, wContractAddress) => {
+                sendBet: async (sender, wContractAddress): Promise<boolean> => {
                     // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
                     const wContract = WonTonContract.createFromAddress(wContractAddress)
                     const client = await wonTonClientProvider.wonTonClient();
@@ -164,7 +150,10 @@ const createWontopiaStore = (
 
                     if (success) {
                         get().startGame();
+                        return true;
                     }
+
+                    return false;
                 },
                 sendBetNft: async (sender, nftAddress) => {
                     // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
@@ -214,11 +203,10 @@ const gameTakesTooLongCheck = async (waitAmountMs: number, get: () => NftStore, 
     const sleepTimeout = 200
     const cyclesToWait = waitAmountMs / sleepTimeout;
     let waitCycles = 0;
-    while (get().gameIsRunning) {
+    while (get().gameIsRunning && !get().isGameTakingTooLong) {
         await wait(sleepTimeout);
         if (++waitCycles > cyclesToWait) {
             set({ isGameTakingTooLong: true });
-            return
         }
     }
 }

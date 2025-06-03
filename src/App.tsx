@@ -1,26 +1,18 @@
 import './App.css'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTonWallet } from '@tonconnect/ui-react';
 import { tonAddress } from './lib/TonUtils';
 import { Disclaimer } from './Disclaimer';
 import { Game } from './Game';
+import { testOnly } from "./lib/Constants.ts";
 
 export const App = () => {
-  // const wontopiaStore = useWontopiaStore();
-  const wallet = useTonWallet();
-  const walletAddress = useMemo(() => tonAddress(wallet?.account.address), [ wallet ])
-  const [ ready, setReady ] = useState(false);
+    const wallet = useTonWallet();
+    const walletAddress = useMemo(() => tonAddress(wallet?.account.address), [ wallet ])
+    const walletAddressStr = useMemo(() => walletAddress?.toString({ testOnly }), [ walletAddress ]);
+    const isReady = useMemo(() => !!walletAddressStr, [ walletAddressStr ]);
 
-  useEffect(() => {
-    if (walletAddress) {
-        // wontopiaStore.store(walletAddress.toString({ testOnly }));
-        setReady(true);
-    } else {
-        setReady(false);
-    }
-  }, [walletAddress]);
-
-  return !(ready && walletAddress)
-    ? <Disclaimer/>
-    : <Game walletAddress={walletAddress}/>
+    return !(isReady && walletAddress)
+           ? <Disclaimer/>
+           : <Game key={walletAddressStr} walletAddress={walletAddress}/>
 }

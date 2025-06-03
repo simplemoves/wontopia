@@ -1,5 +1,5 @@
 import './PlayNft.css'
-import { BEUniverses, Nft } from "./lib/Types.ts";
+import { BEUniverses, GameStateLog, Nft } from "./lib/Types.ts";
 import { useCallback, useMemo, useState } from "react";
 import { Button, Dropdown, Image, MenuProps, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
@@ -10,21 +10,22 @@ import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 
 const DEFAULT_TITLE = "Select Nft";
 
-export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverses, walletAddressStr: string }) => {
+type PlayNftProps = {
+    universes: BEUniverses,
+    walletAddressStr: string,
+    gameStateLog: GameStateLog,
+    startGame: () => void,
+}
+
+export const PlayNft = ({ universes, walletAddressStr, gameStateLog, startGame }: PlayNftProps) => {
     console.log(`PlayNft for ${walletAddressStr} and Universe: ${universes.wonTonPower}`);
     const { sender } = useTonConnect();
-    const { stateDescription, stateClassName, subscriptionPaused, sendBetNft } = useWontopiaPlay(universes, walletAddressStr);
+    const { stateDescription, stateClassName, sendBetNft } = useWontopiaPlay(universes, gameStateLog, walletAddressStr);
     const winNfts = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.winNfts);
     const markNftAsBet = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.markNftAsBet);
     const [ nft, setNft ] = useState<Nft | undefined>();
     const [ title, setTitle ] = useState(DEFAULT_TITLE);
     const [ previewVisible, setPreviewVisible ] = useState(false);
-
-    // useEffect(() => {
-    //     console.log(`Install PlayNft`);
-    //     setNft(undefined);
-    //     setTitle(DEFAULT_TITLE);
-    // }, [walletAddressStr, universes.wonTonPower]);
 
     const handleItemClick: MenuProps['onClick'] = useCallback(({ key }: { key: string }) => {
         const nft = winNfts[key];
@@ -52,10 +53,11 @@ export const PlayNft = ({ universes, walletAddressStr }: { universes: BEUniverse
             markNftAsBet(nft?.nft_address);
             setNft(undefined);
             setTitle(DEFAULT_TITLE);
+            startGame();
         }
     }, [ sender, nft?.nft_address, sendBetNft, markNftAsBet, setNft, setTitle ]);
 
-    if (!subscriptionPaused) {
+    if (gameStateLog.after.gameIsStarted) {
         return <div className={stateClassName}><div className="content">{stateDescription}</div></div>
     }
 

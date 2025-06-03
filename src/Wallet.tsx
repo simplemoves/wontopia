@@ -1,12 +1,13 @@
 import './Wallet.css'
 import { ApiOutlined, CopyOutlined, WalletOutlined } from "@ant-design/icons";
-import { Address } from "@ton/core";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { Button, Dropdown, MenuProps } from "antd";
 import { useCallback, useMemo } from "react";
-import { testOnly } from "./lib/Constants.ts";
 
-export const Wallet = ({ walletAddress }: { walletAddress: Address }) => {
+type WalletProps = {
+    walletAddressStr: string
+}
+export const Wallet = ({ walletAddressStr }: WalletProps) => {
   const [ tonConnectUI ] = useTonConnectUI();
 
   const onClick: MenuProps['onClick'] = useCallback(({ key }: { key: string }) => {
@@ -15,7 +16,7 @@ export const Wallet = ({ walletAddress }: { walletAddress: Address }) => {
         tonConnectUI.disconnect();
         break; 
       case 'copy-to-clipboard':
-        navigator.clipboard.writeText(walletAddress.toString({testOnly}));
+        navigator.clipboard.writeText(walletAddressStr);
         break; 
     }
   }, [tonConnectUI]);

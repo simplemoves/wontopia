@@ -1,47 +1,39 @@
 import { useEffect, useMemo } from "react";
-import { BEUniverses, playStateDescriptions } from "../lib/Types.ts";
-import { useSubscription } from "urql";
-import { playStatusSubscriptionQuery } from "../lib/WontopiaGraphQL.ts";
+import { BEUniverses, GameStateLog, playStateDescriptions } from "../lib/Types.ts";
 import { useWontopiaStore } from "../store/WontopiaStore.ts";
 
-export function useWontopiaPlay(universes: BEUniverses, walletAddressStr: string) {
-    const startSubscription = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.startSubscription);
-    const subscriptionPaused = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.subscriptionPaused);
-    const state = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.state);
-    const startedAt = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.startedAt);
-    const gameStateHandler = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.gameStateHandler);
+export function useWontopiaPlay(universes: BEUniverses, gameStateLog: GameStateLog, walletAddressStr: string) {
     const handleUpdate = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.handleUpdate);
     const sendBet = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.sendBet);
     const sendBetNft = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.sendBetNft);
 
-    const [ stateDescription, stateClassName ] = useMemo(() => playStateDescriptions(state), [ state ]);
-    const startedAtMemoized = useMemo(() => startedAt ?? new Date().toISOString(), [startedAt]);
+    const [ stateDescription, stateClassName ] = useMemo(() => playStateDescriptions(gameStateLog.after.state), [ gameStateLog.after.state ]);
 
-    // Run every time universes, walletAddress parameters change, to get the current play state of the wallet
     useEffect(() => {
-        console.log(`useWontopiaPlay installed for: ${walletAddressStr}, universe: ${universes.wonTonPower}`);
-        startSubscription();
-        handleUpdate();
-    }, []);
+        if (gameStateLog.before.state !== gameStateLog.after.state && (gameStateLog.after.state === 'WIN' || gameStateLog.after.state === 'LOOSE') ) {
+            // NFT Request
+            handleUpdate();
+        }
+    }, [ gameStateLog ]);
 
-    console.log(`subscriptionPaused: ${subscriptionPaused}`);
+    // console.log(`subscriptionPaused: ${subscriptionPaused}`);
 
-    const [{ data, error}] = useSubscription({
-        query: playStatusSubscriptionQuery,
-        variables: {
-            walletAddressStr: walletAddressStr,
-            power: universes.wonTonPower,
-            startedAt: startedAtMemoized,
-        },
-        pause: subscriptionPaused,
-    });
-
-    useEffect(() => { gameStateHandler(data, error); }, [data, error, gameStateHandler]);
+    // const [{ data, error}] = useSubscription({
+    //     query: playStatusSubscriptionQuery,
+    //     variables: {
+    //         walletAddressStr: walletAddressStr,
+    //         power: universes.wonTonPower,
+    //         startedAt: startedAtMemoized,
+    //     },
+    //     pause: true,
+    //     // pause: subscriptionPaused,
+    // });
+    //
+    // useEffect(() => { gameStateHandler(data, error); }, [data, error, gameStateHandler]);
 
     return {
         sendBet,
         sendBetNft,
-        subscriptionPaused,
         stateDescription,
         stateClassName
     };
