@@ -1,5 +1,5 @@
 import { Col, Divider, Row } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { globalUniversesHolder } from "./store/GlobalUniversesHolder";
 import { Address } from "@ton/core";
 import { NftCollections } from "./NftCollections";
@@ -10,7 +10,8 @@ import { Universes } from "./Universes";
 import { initialUserStates, testOnly } from "./lib/Constants.ts";
 import { useSubscription } from "urql";
 import { playStatusSubscriptionQuery } from "./lib/WontopiaGraphQL.ts";
-import { activePlayStates, GameStateLog, UserGameEvent } from "./lib/Types.ts";
+import { activePlayStates, GameStateLog, playStateDescriptions, UserGameEvent } from "./lib/Types.ts";
+import { useWontopiaStore } from "./store/WontopiaStore.ts";
 
 type GameProps = {
     walletAddress: Address
@@ -42,16 +43,25 @@ export const Game = ({ walletAddress }: GameProps) => {
     });
 
     const gameStateLog = useMemo(() => gameStateLogs[universes.wonTonPower], [ universes.wonTonPower, gameStateLogs ])
+    const handleUpdate = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.handleUpdate);
+    const playStateDescription = useMemo(() => playStateDescriptions(gameStateLog.after.state), [ gameStateLog.after.state ]);
+
+    useEffect(() => {
+        if (gameStateLog.before.state !== gameStateLog.after.state && (gameStateLog.after.state === 'WIN' || gameStateLog.after.state === 'LOOSE') ) {
+            // NFT Request with postpone for 10 seconds
+            handleUpdate(10000);
+        }
+    }, [ gameStateLog, handleUpdate ] );
 
     const startGame = useCallback(() => {
         const gameLog = gameStateLogs[universes.wonTonPower];
         const newGameLog: GameStateLog = {
-            before: { ...gameLog.after},
+            before: { ...gameLog.after },
             after: { state: 'REQUESTED', stateChangedAt: new Date(), gameIsStarted: true }
         }
 
         setGameStateLogs(prev => ({ ...prev, [universes.wonTonPower]: newGameLog }));
-    }, [universes.wonTonPower, setGameStateLogs]);
+    }, [universes.wonTonPower, setGameStateLogs, gameStateLogs]);
 
     return (
         <>
@@ -72,7 +82,13 @@ export const Game = ({ walletAddress }: GameProps) => {
                 <CCaption>Choose The Universe</CCaption>
             </Divider>
 
-            <Universes walletAddressStr={walletAddressStr} gameStateLog={gameStateLog} onUniversesChange={setUniverses} startGame={startGame}/>
+            <Universes
+                walletAddressStr={walletAddressStr}
+                gameState={gameStateLog.after.state}
+                isGameStarted={gameStateLog.after.gameIsStarted}
+                playStateDescription={playStateDescription}
+                onUniversesChange={setUniverses}
+                startGame={startGame}/>
 
             <NftCollections walletAddressStr={walletAddressStr} universes={universes}/>
         </>

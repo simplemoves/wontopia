@@ -16,10 +16,10 @@ export const Wallet = ({ walletAddressStr }: WalletProps) => {
         tonConnectUI.disconnect();
         break; 
       case 'copy-to-clipboard':
-        navigator.clipboard.writeText(walletAddressStr);
+        navigator.clipboard.writeText(walletAddressStr).catch(console.error);
         break; 
     }
-  }, [tonConnectUI]);
+  }, [tonConnectUI, walletAddressStr]);
   
   const walletOperations: MenuProps["items"] = useMemo(() => {
     return [

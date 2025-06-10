@@ -1,29 +1,30 @@
 import './PlayButton.css';
 import { Button } from "antd";
-import { BEUniverses, GameStateLog } from "./lib/Types.ts";
+import { BEUniverses, PlayStateDescription } from "./lib/Types.ts";
 import { useCallback } from "react";
-import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 import { useTonConnect } from "./hooks/useTonConnect.ts";
+import { useWontopiaStore } from "./store/WontopiaStore.ts";
 
 type PlayButtonProps = {
     universes: BEUniverses,
     walletAddressStr: string,
-    gameStateLog: GameStateLog,
+    isGameStarted: boolean,
+    playStateDescription: PlayStateDescription,
     startGame: () => void,
 }
 
-export function PlayTon({ universes, walletAddressStr, gameStateLog, startGame }: PlayButtonProps) {
+export function PlayTon({ universes, walletAddressStr, isGameStarted, playStateDescription, startGame }: PlayButtonProps) {
     const { sender } = useTonConnect();
-    const { stateDescription, stateClassName, sendBet } = useWontopiaPlay(universes, gameStateLog, walletAddressStr);
+    const sendBet = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.sendBet);
     const onClickHandler = useCallback(async () => {
         const success = await sendBet(sender, universes.wonTon).catch(console.error);
         if (success) {
             startGame()
         }
-    }, [sendBet, sender, universes.wonTon]);
+    }, [sendBet, sender, universes.wonTon, startGame]);
 
-    if (gameStateLog.after.gameIsStarted) {
-        return <div className={stateClassName}><div className="content">{stateDescription}</div></div>
+    if (isGameStarted) {
+        return <div className={playStateDescription.className}><div className="content">{playStateDescription.description}</div></div>
     }
 
     return <Button

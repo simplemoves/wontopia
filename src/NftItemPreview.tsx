@@ -17,7 +17,7 @@ export function NftItemPreview({ nft, setPreviewVisible, walletAddressStr }: {
     const sendBurnNft = useCallback(async () => {
         setPreviewVisible(false);
         await sendBurn(sender, nft.nft_address);
-    }, [ sendBurn, sender, nft.nft_address ])
+    }, [ sendBurn, sender, nft.nft_address, setPreviewVisible ])
 
     const items = useMemo(() => mapNftToDescriptionProps(nft), [nft]);
 

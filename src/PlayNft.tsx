@@ -1,26 +1,26 @@
 import './PlayNft.css'
-import { BEUniverses, GameStateLog, Nft } from "./lib/Types.ts";
+import { BEUniverses, Nft, PlayStateDescription } from "./lib/Types.ts";
 import { useCallback, useMemo, useState } from "react";
 import { Button, Dropdown, Image, MenuProps, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useWontopiaStore } from "./store/WontopiaStore.ts";
 import { NftItemPreview } from "./NftItemPreview.tsx";
 import { useTonConnect } from "./hooks/useTonConnect.ts";
-import { useWontopiaPlay } from "./hooks/useWontopiaPlay.ts";
 
 const DEFAULT_TITLE = "Select Nft";
 
 type PlayNftProps = {
     universes: BEUniverses,
     walletAddressStr: string,
-    gameStateLog: GameStateLog,
+    isGameStarted: boolean,
+    playStateDescription: PlayStateDescription,
     startGame: () => void,
 }
 
-export const PlayNft = ({ universes, walletAddressStr, gameStateLog, startGame }: PlayNftProps) => {
+export const PlayNft = ({ universes, walletAddressStr, isGameStarted, playStateDescription, startGame }: PlayNftProps) => {
     console.log(`PlayNft for ${walletAddressStr} and Universe: ${universes.wonTonPower}`);
     const { sender } = useTonConnect();
-    const { stateDescription, stateClassName, sendBetNft } = useWontopiaPlay(universes, gameStateLog, walletAddressStr);
+    const sendBetNft = useWontopiaStore(walletAddressStr, universes.wonTonPower)(s => s.sendBetNft);
     const winNfts = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.winNfts);
     const markNftAsBet = useWontopiaStore(walletAddressStr, universes.wonTonPower - 1)(s => s.markNftAsBet);
     const [ nft, setNft ] = useState<Nft | undefined>();
@@ -55,10 +55,10 @@ export const PlayNft = ({ universes, walletAddressStr, gameStateLog, startGame }
             setTitle(DEFAULT_TITLE);
             startGame();
         }
-    }, [ sender, nft?.nft_address, sendBetNft, markNftAsBet, setNft, setTitle ]);
+    }, [ sender, nft?.nft_address, sendBetNft, markNftAsBet, setNft, setTitle, startGame ]);
 
-    if (gameStateLog.after.gameIsStarted) {
-        return <div className={stateClassName}><div className="content">{stateDescription}</div></div>
+    if (isGameStarted) {
+        return <div className={playStateDescription.className}><div className="content">{playStateDescription.description}</div></div>
     }
 
     if (Object.keys(winNfts).length < 1) {

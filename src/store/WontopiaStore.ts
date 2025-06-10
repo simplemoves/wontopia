@@ -1,6 +1,6 @@
 import { create, StoreApi, UseBoundStore } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { activePlayStates, Nft, NftsResult, NftStore, NftsVariables, PlayStateEventNftSchema } from "../lib/Types";
+import { activePlayStates, Nft, NftsResult, NftsVariables, PlayStateEventNftSchema } from "../lib/Types";
 import { nftsQuery } from "../lib/WontopiaGraphQL.ts";
 import { testOnly } from "../lib/Constants.ts";
 import { fetchMeta } from "../providers/WontopiaTonClientProvider.ts";
@@ -11,6 +11,7 @@ import { tryNTimes, wait } from "../lib/PromisUtils.ts";
 import { toNano } from "@ton/core";
 import { WonTonContract } from "../wrappers/WonTonContract.ts";
 import { WonTonNftItemContract } from "../wrappers/WonTonNftItemContract.ts";
+import type { NftStore } from "./WontopiStore.types.ts";
 
 const stores: Record<string, UseBoundStore<StoreApi<NftStore>>> = {}
 
@@ -27,7 +28,7 @@ export const useWontopiaStore = (walletAddressStr: string, wonTonPower: number) 
 const createWontopiaStore = (
     walletAddress: string,
     power: number,
-    name: string) => create<NftStore>()(
+    name: string): UseBoundStore<StoreApi<NftStore>> => create<NftStore>()(
     devtools(
         persist(
             (set, get) => ({
@@ -91,11 +92,6 @@ const createWontopiaStore = (
                         looseNfts: newNft.collection_type === 'LOOSE' ? { ... looseNfts, [newNft.nft_address]: newNft } : looseNfts,
                     });
                 },
-                // getFilteredNfts: (cType): Nft[] => Object.values(get().nfts).filter(nft => nft.state.type === 'NFT' && nft.collection_type === cType),
-                // getWinNfts: () => get().getFilteredNfts('WIN'),
-                // getLooseNfts: () => get().getFilteredNfts('LOOSE'),
-
-                clearStorage: () => { set({ nfts: {}, gameIsRunning: false, state: 'UNKNOWN', startedAt: undefined, stateChangedAt: undefined }) },
                 storageIsEmpty: () => Object.keys(get().nfts).length === 0,
                 gameStateHandler: (playStateEvent) => {
                     if (playStateEvent.power != get().power) {
@@ -128,15 +124,24 @@ const createWontopiaStore = (
                 stopNftsRequest: () => {
                     set({ isNftsRequestInProgress: false });
                 },
-                handleUpdate: () => {
-                    if (get().isNftsRequestInProgress) {
-                        console.debug(`${new Date().getTime()} | Requesting nfts is in progress...`);
-                        return;
+                handleUpdate: (postpone?: number) => {
+                    const request = () => {
+                        if (get().isNftsRequestInProgress) {
+                            console.debug(`${new Date().getTime()} | Requesting nfts is in progress...`);
+                            return;
+                        }
+
+                        requestNfts(get).catch((err) => {
+                            console.error(err);
+                        });
                     }
 
-                    requestNfts(get).catch((err) => {
-                        console.error(err);
-                    });
+                    if (postpone) {
+                        wait(postpone).then(request);
+                    } else {
+                        request();
+                    }
+
                 },
                 sendBet: async (sender, wContractAddress): Promise<boolean> => {
                     // console.log(`calling sendBet for contract ${contract?.address.toString({ testOnly })}`);
@@ -193,6 +198,7 @@ const createWontopiaStore = (
                         get().markNftAsBurned(nftAddress)
                     }
                 },
+                clearStorage: () => { set({ nfts: {}, gameIsRunning: false, state: 'UNKNOWN', startedAt: undefined, stateChangedAt: undefined }); },
             }),
             { name },
         ),

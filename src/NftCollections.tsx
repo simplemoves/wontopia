@@ -45,8 +45,8 @@ export function NftCollections({ walletAddressStr, universes }: { walletAddressS
         <>
             <Divider variant="dotted" style={{ borderColor: 'gray' }}>
                 <CCaption>Your NFT Collections&nbsp;&nbsp;{isNftsRequestInProgress ?
-                                                           <Spin indicator={<ReloadOutlined spin style={{ color: 'gray', fontSize: '5vw' }}/>} style={{ width: '5vw', height: '5vw' }}/> :
-                                                           <ReloadOutlined style={{ color: 'gray', width: '5vw', height: '5vw' }} onClick={handleUpdate}/>}
+                   <Spin indicator={<ReloadOutlined spin style={{ color: 'gray', fontSize: '5vw' }}/>} style={{ width: '5vw', height: '5vw' }}/> :
+                   <ReloadOutlined style={{ color: 'gray', width: '5vw', height: '5vw' }} onClick={() => handleUpdate()}/>}
                 </CCaption>
             </Divider>
             {Object.keys(winNfts).length > 0 && activeKey === '1' ? (

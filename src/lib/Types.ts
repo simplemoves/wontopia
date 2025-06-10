@@ -1,4 +1,4 @@
-import { Address, Sender } from '@ton/core';
+import { Address } from '@ton/core';
 import { z } from 'zod';
 
 export const WIN = "WIN";
@@ -275,72 +275,6 @@ export const GameStateLogSchema = z.object({
     after: GameStateSchema,
 })
 
-export const GetGameStateFunctionSchema = z.function().args().returns(PlayStateSchema);
-export const StartGameFunctionSchema = z.function().args().returns(z.void());
-export const ContinueGameFunctionSchema = z.function().args().returns(z.void());
-export const StopGameFunctionSchema = z.function().args().returns(z.void());
-export const IsRunningFunctionSchema = z.function().args().returns(z.boolean());
-export const SetNftStateFunctionSchema = z.function().args(z.string(), SetNftTypeSchema).returns(z.void());
-export const MarkNftAsBurnedFunctionSchema = z.function().args(z.string()).returns(z.void());
-export const MarkNftAsBetFunctionSchema = z.function().args(z.union([z.string(), z.undefined()])).returns(z.void());
-export const GetNftsFunctionSchema = z.function().args().returns(NftSchema.array());
-export const AddNftFunctionSchema = z.function().args(NftSchema).returns(z.void());
-export const GameStateHandlerFunctionSchema = z.function().args(UserGameEventSchema).returns(z.void());
-export const ClearStorageFunctionSchema = z.function().args().returns(z.void());
-export const StorageIsEmptyFunctionSchema = z.function().args().returns(z.boolean());
-export const StartNftsRequestFunctionSchema = z.function().args().returns(z.void());
-export const StopNftsRequestFunctionSchema = z.function().args().returns(z.void());
-export const HandleUpdateFunctionSchema = z.function().args().returns(z.void());
-export const StartSubscriptionFunctionSchema = z.function().args().returns(z.void());
-export const SendBetFunctionSchema = z.function().args(z.custom<Sender>(), z.custom<Address>()).returns(z.promise(z.boolean()));
-export const SendBurnFunctionSchema = z.function().args(z.custom<Sender>(), z.string()).returns(z.promise(z.void()));
-export const SendBetNftFunctionSchema = z.function().args(z.custom<Sender>(), z.union([z.string(), z.undefined()])).returns(z.promise(z.boolean()));
-// export const GetFilteredNftsFunctionSchema = z.function().args(CollectionTypeSchema).returns(NftSchema.array());
-// export const GetWinNftsFunctionSchema = z.function().args().returns(NftSchema.array());
-// export const GetLooseNftsFunctionSchema = z.function().args().returns(NftSchema.array());
-
-export const NftStoreSchema = z.object({
-    walletAddress: z.string(),
-    power: z.number(),
-    nfts: NftsHistorySchema,
-    winNfts: NftsHistorySchema,
-    looseNfts: NftsHistorySchema,
-
-    isNftsRequestInProgress: z.boolean(),
-
-    gameIsRunning: z.boolean(),
-    isGameTakingTooLong: z.boolean(),
-    state: PlayStateSchema,
-    startedAt: z.string().optional(),
-    stateChangedAt: z.string().optional(),
-
-    startGame: StartGameFunctionSchema,
-    continueGame: ContinueGameFunctionSchema,
-    stopGame: StopGameFunctionSchema,
-
-    setNftState: SetNftStateFunctionSchema,
-    markNftAsBurned: MarkNftAsBurnedFunctionSchema,
-    markNftAsBet: MarkNftAsBetFunctionSchema,
-    addNft: AddNftFunctionSchema,
-    // getFilteredNfts: GetFilteredNftsFunctionSchema,
-    // getWinNfts: GetWinNftsFunctionSchema,
-    // getLooseNfts: GetLooseNftsFunctionSchema,
-
-    clearStorage: ClearStorageFunctionSchema,
-    storageIsEmpty: StorageIsEmptyFunctionSchema,
-
-    gameStateHandler: GameStateHandlerFunctionSchema,
-
-    startNftsRequest: StartNftsRequestFunctionSchema,
-    stopNftsRequest: StopNftsRequestFunctionSchema,
-
-    handleUpdate: HandleUpdateFunctionSchema,
-
-    sendBet: SendBetFunctionSchema,
-    sendBurn: SendBurnFunctionSchema,
-    sendBetNft: SendBetNftFunctionSchema,
-});
-
 ////////////////////////////////
 // Types infering and exporting
 ////////////////////////////////
@@ -349,7 +283,6 @@ export type BEUniverses = z.infer<typeof BEUniversesSchema>;
 export type CollectionType = z.infer<typeof CollectionTypeSchema>;
 export type Nft = z.infer<typeof NftSchema>;
 export type NftsHistory = z.infer<typeof NftsHistorySchema>;
-export type NftStore = z.infer<typeof NftStoreSchema>;
 export type CollectionInfo = z.infer<typeof CollectionInfoSchema>;
 export type GetNftData = z.infer<typeof GetNftDataSchema>;
 export type FeGetNftData = z.infer<typeof FeGetNftDataSchema>;
@@ -395,20 +328,37 @@ export const activePlayStates: Record<PlayState, boolean> = {
     TIMEOUT: false,
 }
 
-export const playStateDescriptions = (ps: PlayState | undefined): [ string, string ] => {
+export type PlayStateDescription = {
+    description: string;
+    className: string;
+}
+
+export const playStateDescriptions = (ps: PlayState | undefined): PlayStateDescription => {
     switch (ps) {
-        case undefined:
-            return [ "Getting Game Status...", "status-get" ]
-        case REQUESTED:
-            return [ "Getting Game Status...", "status-get" ]
-        case UNKNOWN:
-            return [ "Getting Game Status...", "status-unknown" ]
-        case IN_PLAY:
-            return [ "You Are In Game", "status-in-play" ]
-        case OUT_PLAY:
-            return [ "Your Game Played", "status-out-play" ]
-        default:
-            return [ "Game Finished", "status-finished" ]
+        case undefined: return {
+            description: "Getting Game Status...",
+            className: "status-get",
+        };
+        case REQUESTED: return {
+            description: "Getting Game Status...",
+            className: "status-get",
+        };
+        case UNKNOWN: return {
+            description: "Getting Game Status...",
+            className: "status-unknown",
+        };
+        case IN_PLAY: return {
+            description: "You Are In Game",
+            className: "status-in-play",
+        };
+        case OUT_PLAY: return {
+            description: "Your Game Played",
+            className: "status-out-play",
+        };
+        default: return {
+            description: "Game Finished",
+            className: "status-finished",
+        };
     }
 }
 
